@@ -2,7 +2,9 @@
         <div id="form-container">
             <div id="form-wrapper">
                 <form action="">
-                    this is the actual form tag
+                    <div id="title-cont">
+                        <h3 id="title">Sign In</h3>
+                    </div>
                 </form>
             </div>
         </div>
@@ -26,10 +28,17 @@ export default {
         align-content: center;
     }
     #form-wrapper {
-        border: solid rgb(184, 197, 190);
+        /* border: solid 1px rgb(106, 112, 109); */
+        box-shadow:0px 0px 8px rgb(106, 112, 109) rgb(106, 112, 109) ;
         border-radius: 8px;
         background-image: linear-gradient(to right, rgba(97, 160, 211, 0.6), rgba(78, 160, 78, 0.6));        
         width: 400px;
         height: 530px;
+    }
+    #title-cont {
+        /* border: none; */
+        border-bottom: solid white 1px;
+
+        color: white;
     }
 </style>
