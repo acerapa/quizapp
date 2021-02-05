@@ -1,6 +1,6 @@
 <template>
   <div id="main-container">
-    <div id="form-cont">this is Sign-Up</div>
+    <div id="form-cont"></div>
   </div>
 </template>
 
