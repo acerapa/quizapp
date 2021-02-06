@@ -46,15 +46,31 @@
         <img id="logo-img" src="../assets/logo2.png" alt />
         <h3>Sign Up</h3>
         <form>
-        <input type="text" class="input-field" placeholder="First Name" />
-        <input type="text" class="input-field" placeholder="Last Name" />
-        <input type="email" class="input-field" placeholder="Email" />
-        <input type="password" class="input-field" placeholder="Password" />
-        <input
-          type="password"
-          class="input-field"
-          placeholder="Confirm Password"
-        /><br>
+          <input type="text" class="input-field" placeholder="First Name" />
+          <br>
+          <small class="error"></small>
+          <br>
+          <input type="text" class="input-field" placeholder="Last Name" />
+          <br>
+          <small class="error"></small>
+          <br>
+          <input type="email" class="input-field" placeholder="Email" />
+          <br>
+          <small class="error"></small>
+          <br>
+          <input type="password" class="input-field" placeholder="Password" />
+          <br>
+          <small class="error"></small>
+          <br>
+          <input
+            type="password"
+            class="input-field"
+            placeholder="Confirm Password"
+          />
+          <br>
+          <small class="error"></small>
+          <br>
+          <input type="submit" id="submit" value="Sign up" />
         </form>
         <span id="form-footer"
           >Already have an account?
@@ -93,6 +109,37 @@ export default {
 </script>
 
 <style scoped>
+
+.error {
+  color: red
+}
+
+
+#submit {
+  width: 100px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  outline: none;
+  background-image: linear-gradient(
+    to right,
+    rgb(124, 175, 171),
+    rgb(17, 107, 182)
+  );
+  color: white;
+  cursor: pointer;
+}
+
+#submit:hover {
+  background-image: linear-gradient(
+    to right,
+    rgb(124, 175, 171, 0.5),
+    rgb(17, 107, 182, 0.5)
+  );
+}
+
 #logo-img {
   width: 100px;
   height: 100px;
@@ -186,10 +233,10 @@ export default {
 
 .input-field {
   width: 80%;
-  height: 40px;
+  height: 35px;
   border-radius: 20px;
   border: none;
-  margin: 10px;
+  /* margin: 10px; */
   text-align: center;
   border: white 0.5px solid;
 }
