@@ -149,11 +149,12 @@ export default {
   position: fixed;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(
+    background-image: linear-gradient(
     to right,
-    rgb(65, 142, 206),
-    rgb(64, 128, 64)
+    rgb(192, 222, 248),
+    rgb(201, 250, 201)
   );
+  text-align: center;
   display: grid;
   align-items: center;
   justify-items: center;
