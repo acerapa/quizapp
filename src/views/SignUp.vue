@@ -5,14 +5,29 @@
       <span>Choose account type: </span>
       <div id="choice-wrapper">
         <div class="choice-cont">
-          <div class="choice-header" id="teacher">
-            <h4 >Teacher</h4>
+          <div class="choice-header teacher">
+            <h4>Teacher</h4>
           </div>
+          <ul class="abilities">
+            <li class="ability">Create's the exam</li>
+            <li class="ability">View the students progress</li>
+            <li class="ability">View Exam results</li>
+            <li class="ability">Disable an exam</li>
+          </ul>
+
+          <button class="next teacher">Teacher</button>
         </div>
         <div class="choice-cont">
-          <div class="choice-header" id="student">
+          <div class="choice-header student">
             <h4>Student</h4>
           </div>
+          <ul class="abilities">
+            <li class="ability">Join an exam</li>
+            <li class="ability">Take an exam</li>
+            <li class="ability">View exam results</li>
+            <li class="ability">Delete exam results</li>
+          </ul>
+          <button class="next student">Student</button>
         </div>
         <span id="form-footer"
           >Already have an account?
@@ -82,14 +97,37 @@ export default {
 
 .choice-header {
   /* border: solid 1px; */
-  border: solid white 1px;
+  border: solid rgb(91, 117, 99) 1px;
 }
 
-#teacher {
+.teacher {
   background-color: rgb(65, 142, 206);
 }
 
-#student {
+.student {
   background-color: rgb(64, 128, 64);
+}
+
+.abilities {
+  text-align: left !important;
+}
+
+.ability {
+  padding: 10px 0px;
+}
+
+.next {
+  outline: none;
+  width: 80%;
+  height: 40px;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 5px 0px 10px gray;
+  cursor: pointer;
+  /* color: white; */
+}
+.next:hover {
+  color: white;
+  opacity: 0.5;
 }
 </style>
