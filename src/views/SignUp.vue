@@ -130,4 +130,22 @@ export default {
   color: white;
   opacity: 0.5;
 }
+
+
+@media screen and (max-width: 400px) {
+  #form-cont {
+    width: 95%;
+    height: 100%;
+    overflow: scroll;
+  }
+
+  .choice-cont {
+    display: block;
+    margin: 10px 0px;
+  }
+
+  #choice-wrapper {
+    display: block;
+  }
+}
 </style>
