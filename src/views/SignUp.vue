@@ -43,7 +43,7 @@
 
       <!-- this part is for filling up the rest of info -->
       <div id="form-wrapper" v-if="choosed">
-        <img id="logo-img" src="../assets/logo2.png" alt />
+        <img id="logo-img" src="../assets/logo.png" alt />
         <h3>Sign Up</h3>
         <form>
           <input type="text" class="input-field" placeholder="First Name" />

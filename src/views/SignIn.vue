@@ -3,7 +3,7 @@
     <div id="form-wrapper">
       <form action>
         <div id="logo-cont">
-          <img id="logo-img" src="../assets/logo2.png" alt />
+          <img id="logo-img" src="../assets/logo.png" alt />
           <h3>Quizzone</h3>
           <div id="input-cont">
             <input type="text" class="input-field" placeholder="Email or username" />
