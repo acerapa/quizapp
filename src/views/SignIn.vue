@@ -16,7 +16,7 @@
       </form>
       <br>
       <br>
-      Haven't joined yet? <a href="#">Sign up here!</a>
+      Haven't joined yet? <router-link to="/sign-up">Sign up here!</router-link>
     </div>
   </div>
 </template>
@@ -53,6 +53,12 @@ export default {
   );
   width: 400px;
   height: 530px;
+}
+
+@media only screen and (max-width: 400px) {
+  #form-wrapper {
+    width: 95%;
+  }
 }
 
 #logo-cont {
