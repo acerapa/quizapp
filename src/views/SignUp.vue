@@ -1,9 +1,11 @@
 <template>
   <div id="main-container">
     <div id="form-cont">
-      <h3>Create Account</h3>
-      <span>Choose account type: </span>
-      <div id="choice-wrapper">
+      <h3 v-if="!choosed">Create Account</h3>
+
+      <!-- choosing the account type process -->
+      <span v-if="!choosed">Choose account type: </span>
+      <div id="choice-wrapper" v-if="!choosed">
         <div class="choice-cont">
           <div class="choice-header teacher">
             <h4>Teacher</h4>
@@ -15,7 +17,9 @@
             <li class="ability">Disable an exam</li>
           </ul>
 
-          <button class="next teacher">Teacher</button>
+          <button class="next teacher" v-on:click="choose('teacher')">
+            Teacher
+          </button>
         </div>
         <div class="choice-cont">
           <div class="choice-header student">
@@ -27,8 +31,31 @@
             <li class="ability">View exam results</li>
             <li class="ability">Delete exam results</li>
           </ul>
-          <button class="next student">Student</button>
+          <button class="next student" v-on:click="choose('student')">
+            Student
+          </button>
         </div>
+        <span id="form-footer"
+          >Already have an account?
+          <router-link to="/sign-in">Sign in here!</router-link></span
+        >
+      </div>
+
+      <!-- this part is for filling up the rest of info -->
+      <div id="form-wrapper" v-if="choosed">
+        <img id="logo-img" src="../assets/logo2.png" alt />
+        <h3>Sign Up</h3>
+        <form>
+        <input type="text" class="input-field" placeholder="First Name" />
+        <input type="text" class="input-field" placeholder="Last Name" />
+        <input type="email" class="input-field" placeholder="Email" />
+        <input type="password" class="input-field" placeholder="Password" />
+        <input
+          type="password"
+          class="input-field"
+          placeholder="Confirm Password"
+        /><br>
+        </form>
         <span id="form-footer"
           >Already have an account?
           <router-link to="/sign-in">Sign in here!</router-link></span
@@ -41,10 +68,36 @@
 <script>
 export default {
   name: "Sign-Up",
+  data() {
+    return {
+      choosed: false,
+      newUserInfo: {
+        firstname: "",
+        lastname: "",
+        email: "",
+        password: "",
+        accountType: "",
+      },
+    };
+  },
+  methods: {
+    choose(accountType = null) {
+      this.choosed = !this.choosed;
+      if (accountType) {
+        this.newUserInfo.accountType = accountType;
+        console.log(this.newUserInfo);
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
+#logo-img {
+  width: 100px;
+  height: 100px;
+}
+
 #main-container {
   position: fixed;
   width: 100%;
@@ -131,6 +184,20 @@ export default {
   opacity: 0.5;
 }
 
+.input-field {
+  width: 80%;
+  height: 40px;
+  border-radius: 20px;
+  border: none;
+  margin: 10px;
+  text-align: center;
+  border: white 0.5px solid;
+}
+
+.input-field:focus {
+  border: rgb(92, 187, 139) solid 0.5px;
+  outline: none;
+}
 
 @media screen and (max-width: 400px) {
   #form-cont {
