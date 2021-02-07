@@ -7,7 +7,7 @@
     </div>
     <div id="nav-links">
       <router-link class="nav-item" to="#">Community</router-link>
-      <router-link class="nav-item" to="#">Services</router-link>
+      <router-link class="nav-item" to="/services">Services</router-link>
       <router-link class="nav-item" to="/about">About</router-link>
       <router-link class="nav-item" to="/sign-in">Sign in</router-link>
       <router-link class="nav-item" to="/sign-up">Sign up</router-link>
@@ -29,7 +29,8 @@ export default {
 }
 
 .nav-item:hover {
-  color: rgb(136, 170, 136);
+  color: rgb(43, 88, 250);
+  border-bottom: solid 2px rgb(43, 88, 250);
 }
 
 #nav-links {
