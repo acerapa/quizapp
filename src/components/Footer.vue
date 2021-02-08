@@ -3,7 +3,6 @@
     <div class="footer-item">
       <div id="logo-cont">
         <img src="../assets/logo1.png" id="logo" />
-        <span>Quizzone</span>
       </div>
     </div>
     <div class="footer-item"></div>
@@ -26,26 +25,27 @@ export default {
 
 <style scoped>
 #logo-cont {
-  border: solid green 1px;
+  /* border: solid green 1px; */
+  padding: 5px;
 }
 
 #logo {
-  width: 100px;
   height: 100px;
 }
 
 .footer-item {
-  border: solid white 1px;
+  border: solid rgb(41, 2, 2) 1px;
   margin: 12px;
   text-align: center;
+  border-radius: 5px;
 }
 
 #footer {
-  /* border: solid blue 1px; */
+  /* border: solid white; */
   width: 100%;
   position: relative;
   height: 200px;
-  background-color: rgb(29, 29, 70);
+  background-color: rgb(110, 110, 110);
   color: white;
   display: grid;
   grid-template-columns: 1fr 1fr;
