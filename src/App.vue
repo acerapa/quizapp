@@ -1,6 +1,5 @@
 <template>
-  
-  <router-view/>
+  <router-view />
 </template>
 
 <style>
@@ -15,4 +14,13 @@ body {
   padding: 0px;
   margin: 0px;
 }
+
+::-webkit-scrollbar {
+width: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+background: #FF0000;
+}
+
 </style>

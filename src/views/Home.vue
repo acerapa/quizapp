@@ -1,21 +1,24 @@
 <template>
   <div class="home">
     <Header />
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
+    <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
+    <Footer />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+// import HelloWorld from "@/components/HelloWorld.vue";
 import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 export default {
   name: "Home",
   components: {
-    HelloWorld,
+    // HelloWorld,
     Header,
+    Footer
   },
 };
 </script>
@@ -33,6 +36,11 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.home {
+  width: 100%;
+  height: 100%;
 }
 </style>
 

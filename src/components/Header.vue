@@ -29,8 +29,8 @@ export default {
 }
 
 .nav-item:hover {
-  color: rgb(43, 88, 250);
-  border-bottom: solid 2px rgb(43, 88, 250);
+  color: rgb(105, 190, 240);
+  /* border-bottom: solid 2px rgb(43, 88, 250); */
 }
 
 #nav-links {
@@ -44,6 +44,7 @@ export default {
 
 #main-header {
   height: 80px;
+  width: 100%;
   background-image: linear-gradient(
     to right,
     rgb(192, 222, 248),
@@ -53,5 +54,7 @@ export default {
   grid-template-columns: 1fr 1fr;
   align-items: center;
   box-shadow: 0px 0px 10px gray;
+  position: fixed;
+  top:0px;
 }
 </style>
