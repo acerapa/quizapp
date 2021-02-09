@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       styleObject: {
-        top: `${screen.height - 150}px`,
+        top: `${screen.height - 330}px`,
       },
     };
   },
