@@ -8,8 +8,10 @@
           <p>Provides a handy quizzes online</p>
         </div>
       </div>
-      <div class="lp-item" id="lp-img">
-          image here
+      <div class="lp-item" id="lp-img-cont">
+        <div  id="lp-img">
+
+        </div>
       </div>
     </div>
     <Footer></Footer>
@@ -38,7 +40,9 @@ export default {
 
 <style scoped>
 #content {
-  margin-top: 100px;
+  margin-top: 80px;
+  background-image: url('../assets/background.jpg');
+  background-size: cover;
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-items: center;
@@ -54,6 +58,14 @@ export default {
 }
 
 #lp-img {
-    width: auto;
+  padding: 100px;
+  width: 100px;
+  height: 100px;
+  background-image: url('../assets/quiz.png');
+  background-size: cover;
+}
+
+#lp-img-cont {
+  padding: 100px;
 }
 </style>
