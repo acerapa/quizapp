@@ -1,9 +1,11 @@
 <template>
-  <header>
-    <div class="w-[100%] bg-gradient-to-r from-[#B9F0FC] to-[#8FEB8D] h-20 shadow-md flex items-center">
+  <header class="shadow">
+    <div class="w-[100%] bg-gradient-to-r from-[#B9F0FC] to-[#8FEB8D] h-20 flex items-center">
       <img src="../../assets/logo.png" alt="logo" class="block ml-3 w-16">
       <h1 class="text-xl font-extrabold ml-3 text-green-500">Quiz App</h1>
-      <h2 class="text-lg text-green-500 block ml-auto mr-3 cursor-pointer hover:text-[#00b9ff]">Login</h2>
+      <RouterLink to="/login" class="text-lg text-green-500 block ml-auto mr-3 cursor-pointer hover:text-[#00b9ff]">
+        <h2>Login</h2>
+      </RouterLink>
     </div>
   </header>
 
