@@ -1,6 +1,6 @@
-import { APIHandler, HTTPMethods } from '../api'
+import { APIHandler, HTTPMethods, verfiyToken } from '../api'
 import { defineStore } from 'pinia'
-import helpers from '../utils/helpers'
+import { StateKeys, saveState, removeState, getState } from '../utils/helpers'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -13,15 +13,32 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
+    getAuthUser: async function () {
+      const isVerfied = await verfiyToken()
+      if (!isVerfied) {
+        console.log('need login')
+        return
+      }
+
+      const response = await APIHandler('users/me', HTTPMethods.GET, null, {
+        Authorization: `Bearer ${getState(StateKeys.ACCESS)}`
+      })
+      if (response) {
+        this.user = response.user
+        return true
+      }
+      return false
+    },
     login: async function (credentials) {
       const response = await APIHandler('users/token', HTTPMethods.POST, credentials)
       
       if (response && response.access) {
         this.token = response.access
         this.refresh = response.refresh
+        this.user = response.user
 
-        helpers.saveState('access', response.access)
-        helpers.saveState('refresh', response.refresh)
+        saveState(StateKeys.ACCESS, response.access)
+        saveState(StateKeys.REFRESH, response.refresh)
         return true
       }
 
@@ -36,8 +53,9 @@ export const useAuthStore = defineStore('auth', {
       if (response) {
         this.token = null
         this.refresh = null
-        helpers.removeState('access')
-        helpers.removeState('refresh')
+        this.user = null
+        removeState(StateKeys.ACCESS)
+        removeState(StateKeys.REFRESH)
         return true
       }
     }

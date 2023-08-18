@@ -1,35 +1,202 @@
 <template>
     <SideNav />
     <div class="ml-60 p-5">
-        <h1 class="text-xl font-bold mt-11">Create Quiz</h1>
+        <ModalComponent position="top-center" ref="modal">
+            <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xl font-bold">Quiz Settings</h1>
+                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuizSettingModal" alt="" srcset="">
+                </div>
+                <div class="mt-5">
+                    <div class="py-2">
+                        <label for="is_active">Is Active</label>
+                        <input type="checkbox" v-model="quizSettingForm.is_active" class="ml-2">
+                    </div>
+                    <div class="py-2">
+                        <label for="is_shuffle">Is Shuffle</label>
+                        <input type="checkbox" v-model="quizSettingForm.is_shuffle" class="ml-2">
+                    </div>
+                    <div class="py-2">
+                        <label for="participants_limit">Participants Limit</label>
+                        <input type="number" v-model="quizSettingForm.participants_limit" class="ml-2 w-20 border focus:outline outline-1 outline-gray-200  rounded p-2">
+                    </div>
+                    <div class="py-2">
+                        <label for="start_date">Start Date</label>
+                        <input type="date" v-model="quizSettingForm.start_date" class="ml-2 w-40 border focus:outline outline-1 outline-gray-200  rounded p-2">
+                    </div>
+                    <div class="py-2">
+                        <label for="end_date">End Date</label>
+                        <input type="date" v-model="quizSettingForm.end_date" class="ml-2 w-40 border focus:outline outline-1 outline-gray-200  rounded p-2">
+                    </div>
+                </div>
+                <div class="block text-center mt-10">
+                    <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300" @click="closeQuizSettingModal">Cancel</button>
+                    <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300" @click="saveQuizSetting">Save</button>
+                </div>
+            </div>
+        </ModalComponent>
 
-        <div class="mt-5 w-max">
-            <img src="../../../assets/setting.png" class="w-5 block ml-auto cursor-pointer" alt="">
-            <label for="Instuction">Quiz Instruction</label><br>
-            <QuillEditor @update:content="updateForm" theme="snow" :options="{ placeholder: 'Quiz Instruction' }"/>
-            <!-- <textarea name="instruction" id="" cols="60" rows="2" class="border mt-2 rounded p-2" placeholder="Quiz Instruction"></textarea> -->
+        <h1 class="text-xl font-bold mt-11">Create Quiz</h1>
+        <div class="mt-5 max-w-4xl bg-white shadow-md rounded-md p-5">
+            <img src="../../../assets/setting.png" class="w-5 block ml-auto cursor-pointer" @click="showQuizSettingModal" alt="">
+            <label for="title">Title</label>
+            <div class="text-start">
+                    <input type="text" placeholder="Title" v-model="quizForm.title"
+                        :class="[{ 'border-red-600': errors.title && errors.title.length }, 'border', 'p-2', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']" />
+                    <small :class="['text-red-600', { 'opacity-100': errors.title && errors.title.length, 'opacity-0': !(errors.title && errors.title.length) },]">* {{
+                        errors.title && errors.title.length ? errors.title[0] : '' }}</small>
+                </div>
+            <div class="text-start">
+                <label for="Instuction">Quiz Instruction</label><br>
+                <div :class="[{ 'border-red-600': errors.instruction && errors.instruction.length }, 'rounded']">
+                    <EditorComponent @update:content="editorUpdateContent" :value="quizForm.instruction" />
+                </div>
+                <small :class="['text-red-600', { 'opacity-100': errors.instruction && errors.instruction.length, 'opacity-0': !(errors.instruction && errors.instruction.length) },]">* {{
+                    errors.instruction && errors.instruction.length ? errors.instruction[0] : '' }}</small>
+            </div>
+            
+            <div class="mt-5 flex justify-end gap-2">
+                <button class="block bg-green-500 text-white px-5 py-2 rounded hover:bg-green-300" @click="back">Back</button>
+                <button class="block bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-300" @click="createQuiz">Save</button>
+            </div>
         </div>
         <div class="mt-5">
             <button class="bg-[#01b9ff] hover:bg-blue-300 text-white py-2 px-4 rounded-md">Add Questions</button>
-            <div class="mt-4 border w-max p-5">
-                Table here
+            <div class="sm:overflow-x-auto px-5 mt-5">
+                <table class="w-full">
+                    <thead>
+                        <tr class="font-bold text-base">
+                            <td class="border-b-2 text-start px-2 py-2">Id</td>
+                            <td class="border-b-2 text-start px-2 py-2">Question</td>
+                            <td class="border-b-2 text-start px-2 py-2">Type</td>
+                            <td class="border-b-2 text-start px-2 py-2">Actions</td>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { validate, hasError } from '../../../utils/validator';
+import { useQuizStore } from '../../../stores/quiz'
+import { useAuthStore } from '../../../stores/auth';
+import { useRoute, useRouter } from 'vue-router';
+// components
 import SideNav from '@/components/SideNav.vue';
+import ModalComponent from '../../../components/ModalComponent.vue';
+import EditorComponent from '../../../components/EditorComponent.vue';
 
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+/** ========================================================================
+ * COFIGURATION AND VARIABLE DECLARATION
+ ===========================================================================*/
+const quiz = ref({});
+
+const quizStore = useQuizStore();
+const authStore = useAuthStore();
+
+const route = useRoute();
+const router = useRouter();
 
 const quizForm = ref({
-    content: ''
+    title: '',
+    instruction: '',
+    created_by: null
 });
 
-const updateForm = (content) => {
-    console.log(JSON.stringify(content));
+const quizSettingForm = ref({
+    is_active: false,
+    is_shuffle: false,
+    participants_limit: 0,
+    start_date: null,
+    end_date: null
+})
+
+const errors = ref([]);
+const rules = {
+    title: {
+        required: true,
+        min_length: 6,
+        max_length: 255
+    },
+    instruction: {
+        required: true,
+        min_length: 20,
+    }
+};
+
+const modal = ref(null);
+
+/** ========================================================================
+ * METHODS
+ ===========================================================================*/
+
+onMounted(async () => {
+    await authStore.getAuthUser();
+    quizForm.value.created_by = authStore.user.id;
+
+    if (route.params.id) {
+        await quizStore.getQuiz(route.params.id);
+        
+        // quiz data to model
+        quizForm.value.title = quizStore.quiz.title;
+        quizForm.value.instruction = quizStore.quiz.instruction;
+        quizForm.value.created_by = quizStore.quiz.created_by;
+
+        // quiz setting data to model
+        quizSettingForm.value.is_active = quizStore.quiz.quizsetting_set[0].is_active;
+        quizSettingForm.value.is_shuffle = quizStore.quiz.quizsetting_set[0].is_shuffle;
+        quizSettingForm.value.participants_limit = quizStore.quiz.quizsetting_set[0].participants_limit;
+        quizSettingForm.value.start_date = quizStore.quiz.quizsetting_set[0].start_date;
+        quizSettingForm.value.end_date = quizStore.quiz.quizsetting_set[0].end_date;
+    }
+})
+
+const showQuizSettingModal = () => {
+    modal.value.showModal();
 }
+
+const closeQuizSettingModal = () => {
+    modal.value.closeModal();
+}
+
+const editorUpdateContent = (content) => {
+    quizForm.value.instruction = content;
+}
+
+const saveQuizSetting = async () => {
+    quiz.value.setting = quizSettingForm.value;
+
+    if (route.params.id) {
+        await createQuiz();
+    }
+
+    modal.value.closeModal();
+}
+
+const back = () => {
+    router.push({ name: 'quiz-list' });
+}
+
+const createQuiz = async () => {
+    errors.value = validate(quizForm.value, rules);
+    if (hasError(errors.value)) return;
+
+    quiz.value.quiz = quizForm.value;
+    quiz.value.setting = quizSettingForm.value;
+
+    let response = null;
+    if (route.params.id) {
+        response = await quizStore.updateQuiz(route.params.id, quiz.value);
+    } else {
+        response = await quizStore.createQuiz(quiz.value);
+    }
+
+    if ((response.status === 201 || response.status === 200) && !route.params.id) {
+        back();
+    }
+}
+
 </script>
