@@ -6,6 +6,8 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+import * as jQuery from 'jquery'
+
 const app = createApp(App)
 app.use(createPinia())
 
@@ -14,6 +16,8 @@ router.beforeEach((to, from, next) => {
   document.title = to.meta.title ? to.meta.title : 'Quiz App'
   next()
 })
+
+window.jQuery = jQuery;
 
 app.use(router)
 

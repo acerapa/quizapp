@@ -1,7 +1,7 @@
 <template>
     <div class="w-[100%] h-screen bg-gradient-to-r from-[#d7f8ff] to-[#cdffcc] flex items-center">
         <div class="m-auto w-96 h-auto text-center shadow rounded-lg bg-white px-10 py-16 relative">
-            <AlertComponent class="absolute top-0 left-0" :code="alertConfig.code" :message="alertConfig.message" :fade-out-time="alertConfig.fadeOutTime" ref="alert" @fade-out="onFadeOutAlert"/>
+            <AlertComponent class="absolute top-0 left-0 w-full" :code="alertConfig.code" :message="alertConfig.message" :fade-out-time="alertConfig.fadeOutTime" ref="alert" @fade-out="onFadeOutAlert"/>
             <img src="../../assets/logo.png" alt="logo" class="w-28 inline-block mb-5">
             <h1 class="text-xl font-normal">Login</h1>
             <form class="">
@@ -30,12 +30,12 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useAuthStore } from '../../stores/auth'
+import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router';
-import { validate, hasError } from '../../utils/validator'
+import { validate, hasError } from '@/utils/validator'
 
 // components
-import AlertComponent from '../../components/AlertComponent.vue';
+import AlertComponent from '@/components/AlertComponent.vue';
 
 /** ========================================================================
  * COFIGURATION AND VARIABLE DECLARATION

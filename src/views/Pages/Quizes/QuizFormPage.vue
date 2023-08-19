@@ -1,7 +1,15 @@
 <template>
     <SideNav />
     <div class="ml-60 p-5">
-        <ModalComponent position="top-center" ref="modal">
+        <AlertComponent 
+            class="absolute top-2 right-2 z-40" 
+            :code="alertConfig.code" 
+            :message="alertConfig.message" 
+            :fade-out-time="alertConfig.fadeOutTime" 
+            ref="alertQuiz"
+            @fade-out="onAlertClosed"
+        />
+        <ModalComponent position="top-center" ref="modalSetting">
             <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
                 <div class="flex items-center justify-between">
                     <h1 class="text-xl font-bold">Quiz Settings</h1>
@@ -35,6 +43,14 @@
                 </div>
             </div>
         </ModalComponent>
+        <ModalComponent position="top-center" ref="modalQuestionForm">
+            <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xl font-bold">Quiz Settings</h1>
+                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuestionFormModal" alt="" srcset="">
+                </div>
+            </div>
+        </ModalComponent>
 
         <h1 class="text-xl font-bold mt-11">Create Quiz</h1>
         <div class="mt-5 max-w-4xl bg-white shadow-md rounded-md p-5">
@@ -60,8 +76,8 @@
                 <button class="block bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-300" @click="createQuiz">Save</button>
             </div>
         </div>
-        <div class="mt-5">
-            <button class="bg-[#01b9ff] hover:bg-blue-300 text-white py-2 px-4 rounded-md">Add Questions</button>
+        <div class="my-16">
+            <button class="bg-[#01b9ff] hover:bg-blue-300 text-white py-2 px-4 rounded-md" @click="showQuestionFormModal">Add Questions</button>
             <div class="sm:overflow-x-auto px-5 mt-5">
                 <table class="w-full">
                     <thead>
@@ -72,6 +88,18 @@
                             <td class="border-b-2 text-start px-2 py-2">Actions</td>
                         </tr>
                     </thead>
+                    <tbody>
+                        <tr v-for="(question, index) in questions" :key="index">
+                            <td class="border-b text-start px-2 py-2">{{ question.id }}</td>
+                            <td class="border-b text-start px-2 py-2">{{ question.description }}</td>
+                            <td class="border-b text-start px-2 py-2">{{ question.type }}</td>
+                            <td class="border-b text-start px-2 py-2">View</td>
+                        </tr>
+
+                        <tr v-if="!questions.length">
+                            <td colspan="4" class="text-center px-2 py-2">No Questions!</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -80,14 +108,15 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { validate, hasError } from '../../../utils/validator';
-import { useQuizStore } from '../../../stores/quiz'
-import { useAuthStore } from '../../../stores/auth';
+import { validate, hasError } from '@/utils/validator';
+import { useQuizStore } from '@/stores/quiz'
+import { useAuthStore } from '@/stores/auth';
 import { useRoute, useRouter } from 'vue-router';
 // components
 import SideNav from '@/components/SideNav.vue';
-import ModalComponent from '../../../components/ModalComponent.vue';
-import EditorComponent from '../../../components/EditorComponent.vue';
+import AlertComponent from '@/components/AlertComponent.vue';
+import ModalComponent from '@/components/ModalComponent.vue';
+import EditorComponent from '@/components/EditorComponent.vue';
 
 /** ========================================================================
  * COFIGURATION AND VARIABLE DECLARATION
@@ -99,6 +128,12 @@ const authStore = useAuthStore();
 
 const route = useRoute();
 const router = useRouter();
+
+const alertConfig = ref({
+    code: 'success',
+    message: 'Quiz created successfully!',
+    fadeOutTime: 3000
+})
 
 const quizForm = ref({
     title: '',
@@ -127,7 +162,11 @@ const rules = {
     }
 };
 
-const modal = ref(null);
+const questions = ref([]);
+
+const alertQuiz = ref(null);
+const modalSetting = ref(null);
+const modalQuestionForm = ref(null);
 
 /** ========================================================================
  * METHODS
@@ -137,8 +176,10 @@ onMounted(async () => {
     await authStore.getAuthUser();
     quizForm.value.created_by = authStore.user.id;
 
+    
     if (route.params.id) {
         await quizStore.getQuiz(route.params.id);
+        console.log(quizStore.quiz)
         
         // quiz data to model
         quizForm.value.title = quizStore.quiz.title;
@@ -154,17 +195,28 @@ onMounted(async () => {
     }
 })
 
+// modal start
 const showQuizSettingModal = () => {
-    modal.value.showModal();
+    modalSetting.value.showModal();
 }
 
 const closeQuizSettingModal = () => {
-    modal.value.closeModal();
+    modalSetting.value.closeModal();
 }
+
+const showQuestionFormModal = () => {
+    modalQuestionForm.value.showModal();
+}
+
+const closeQuestionFormModal = () => {
+    modalQuestionForm.value.closeModal();
+}
+// modal end
 
 const editorUpdateContent = (content) => {
     quizForm.value.instruction = content;
 }
+
 
 const saveQuizSetting = async () => {
     quiz.value.setting = quizSettingForm.value;
@@ -173,7 +225,7 @@ const saveQuizSetting = async () => {
         await createQuiz();
     }
 
-    modal.value.closeModal();
+    modalSetting.value.closeModal();
 }
 
 const back = () => {
@@ -182,7 +234,12 @@ const back = () => {
 
 const createQuiz = async () => {
     errors.value = validate(quizForm.value, rules);
-    if (hasError(errors.value)) return;
+    if (hasError(errors.value)) {
+        alertConfig.value.code = 'danger',
+        alertConfig.value.message = 'Some fields has errors!'
+        alertQuiz.value.showAlert()
+        return
+    };
 
     quiz.value.quiz = quizForm.value;
     quiz.value.setting = quizSettingForm.value;
@@ -190,13 +247,29 @@ const createQuiz = async () => {
     let response = null;
     if (route.params.id) {
         response = await quizStore.updateQuiz(route.params.id, quiz.value);
+        alertConfig.value.code = 'success'
+        alertConfig.value.message = 'Successfully updated!'
+        alertConfig.value.fadeOutTime = 1000
     } else {
         response = await quizStore.createQuiz(quiz.value);
+        alertConfig.value.code = 'success'
+        alertConfig.value.message = 'Successfully Created!'
+        alertConfig.value.fadeOutTime = 1000
     }
 
-    if ((response.status === 201 || response.status === 200) && !route.params.id) {
-        back();
+    if ((response.status === 201 || response.status === 200)) {
+        alertQuiz.value.showAlert()
+    } else {
+        alertConfig.value.code = 'danger'
+        alertConfig.value.message = 'Something went wrong!'
+        alertConfig.value.fadeOutTime = 3000
+
+        alertQuiz.value.showAlert()
     }
+}
+
+const onAlertClosed = () => {
+    console.log('Alert closed')
 }
 
 </script>

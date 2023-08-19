@@ -1,5 +1,5 @@
 <template>
-    <div :class="['w-full', 'rounded-md', 'border', 'text-white', 'opacity-0', { 'fadeIn': show }, colorCodes[code].bg, colorCodes[code].border]"
+    <div :class="['rounded-md', 'border', 'text-white', 'opacity-0', { 'fadeIn': show }, colorCodes[code].bg, colorCodes[code].border]"
         ref="alertContainer">
         <div class="grid grid-cols-12 gap-1">
             <div class="col-span-10 text-start p-2 flex items-center font-medium">
