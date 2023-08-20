@@ -1,7 +1,7 @@
 <template>
     <div class="w-[100%] h-screen bg-gradient-to-r from-[#d7f8ff] to-[#cdffcc] flex items-center">
         <div class="m-auto w-96 h-auto text-center shadow rounded-lg bg-white px-10 py-16 relative">
-            <AlertComponent class="absolute top-0 left-0" :code="alertConfig.code" :message="alertConfig.message" :fade-out-time="alertConfig.fadeOutTime" @fade-out="onFadeOutAlert"  ref="alert"/>
+            <AlertComponent class="absolute top-0 left-0 w-full" :code="alertConfig.code" :message="alertConfig.message" :fade-out-time="alertConfig.fadeOutTime" @fade-out="onFadeOutAlert"  ref="alert"/>
             <img src="../../assets/logo.png" alt="logo" class="w-28 inline-block mb-5">
             <h1 class="text-xl font-normal">Register</h1>
             <form class="">
