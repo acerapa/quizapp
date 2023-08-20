@@ -68,7 +68,7 @@ const alertTimeOut = ref();
 
 onMounted(() => {
     alertContainer.value.addEventListener('animationend', () => {
-        if (show.value) {
+        if (Array.from(alertContainer.value.classList).includes('fadeIn')) {
             alertContainer.value.classList.remove('fadeIn');
             alertContainer.value.classList.remove('opacity-0');
             if (props.autoClose) {
@@ -76,14 +76,13 @@ onMounted(() => {
                     closeAlert()
                 }, props.fadeOutTime)
             }
-        } else {
-            alertContainer.value.classList.remove('fadeOut');
-            alertContainer.value.classList.add('opacity-0');
-            show.value = false;
         }
 
         if (Array.from(alertContainer.value.classList).includes('fadeOut')) {
+            alertContainer.value.classList.remove('fadeOut');
+            alertContainer.value.classList.add('opacity-100');
             emit('fadeOut')
+            show.value = false
         }
     })
 })
@@ -93,7 +92,6 @@ function showAlert() {
 }
 
 function closeAlert() {
-    clearTimeout(alertTimeOut.value);
     if (alertContainer.value) {
         alertContainer.value.classList.add('fadeOut');
     }

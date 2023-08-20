@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import $ from 'jquery';
 import 'trumbowyg';
 import 'trumbowyg/dist/ui/trumbowyg.min.css';
@@ -17,24 +17,25 @@ const props = defineProps({
         required: true
     }
 })
-
+const $editor = ref(null)
 onMounted(() => {
-    const $editor = $(editor.value);
+    $editor.value = $(editor.value);
 
-    $editor.on('tbwchange', (e) => {
+    $editor.value.on('tbwchange', (e) => {
       const content = e.currentTarget.value;
       emit('update:content', content);
     });
 
-    $editor.trumbowyg({
+    $editor.value.trumbowyg({
         svgPath: '../src/assets/icons.svg',
         btns: [['bold', 'italic'], ['link']],
         html: props.value
     })
 
-    setTimeout(() => {
-        $editor.trumbowyg('html', props.value);
-    }, 300);
+})
+
+watch(() => props.value, function () {
+    $editor.value.trumbowyg('html', props.value);
 })
 
 </script>

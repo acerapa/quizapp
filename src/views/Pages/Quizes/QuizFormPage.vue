@@ -179,7 +179,7 @@ onMounted(async () => {
     
     if (route.params.id) {
         await quizStore.getQuiz(route.params.id);
-        console.log(quizStore.quiz)
+        questions.value = quizStore.quiz.question_set
         
         // quiz data to model
         quizForm.value.title = quizStore.quiz.title;
