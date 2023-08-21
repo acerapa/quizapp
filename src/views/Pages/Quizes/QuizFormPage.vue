@@ -49,6 +49,32 @@
                     <h1 class="text-xl font-bold">Quiz Settings</h1>
                     <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuestionFormModal" alt="" srcset="">
                 </div>
+                <div class="mt-5">
+                    <div class="py-2">
+                        <label for="">Question</label>
+                        <div class="text-start">
+                            <input type="text" placeholder="Question" v-model="questionForm.description"
+                                :class="[{ 'border-red-600': errors.description && errors.description.length }, 'border', 'p-2', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']" />
+                            <small :class="['text-red-600', { 'opacity-100':errors.description && errors.description.length, 'opacity-0': !(errors.description && errors.description.length) },]">* {{
+                                errors.description && errors.description.length ? errors.description[0] : '' }}</small>
+                        </div>
+                    </div>
+                    <div class="py-2">
+                        <label for="">Type</label>
+                        <div class="text-start">
+                            <select name="question" id="" :class="[{ 'border-red-600': errors.type && errors.type.length }, 'border', 'py-2', 'px-4', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']">
+                                <option class="py-2" value="">Choose Question Type</option>
+                                <option value="">Multiple Choice</option>
+                                <option value="">Enumeration</option>
+                                <option value="">Explanation</option>
+                                <option value="">Select</option>
+                                <option value="">True or False</option>
+                            </select>
+                            <small :class="['text-red-600', { 'opacity-100':errors.type && errors.type.length, 'opacity-0': !(errors.type && errors.type.length) },]">* {{
+                                errors.type && errors.type.length ? errors.type[0] : '' }}</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </ModalComponent>
 
@@ -61,11 +87,11 @@
                         :class="[{ 'border-red-600': errors.title && errors.title.length }, 'border', 'p-2', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']" />
                     <small :class="['text-red-600', { 'opacity-100': errors.title && errors.title.length, 'opacity-0': !(errors.title && errors.title.length) },]">* {{
                         errors.title && errors.title.length ? errors.title[0] : '' }}</small>
-                </div>
+            </div>
             <div class="text-start">
                 <label for="Instuction">Quiz Instruction</label><br>
                 <div :class="[{ 'border-red-600': errors.instruction && errors.instruction.length }, 'rounded']">
-                    <EditorComponent @update:content="editorUpdateContent" :value="quizForm.instruction" />
+                    <EditorComponent @update:content="editorUpdateContent" :value="instruction" />
                 </div>
                 <small :class="['text-red-600', { 'opacity-100': errors.instruction && errors.instruction.length, 'opacity-0': !(errors.instruction && errors.instruction.length) },]">* {{
                     errors.instruction && errors.instruction.length ? errors.instruction[0] : '' }}</small>
@@ -149,6 +175,14 @@ const quizSettingForm = ref({
     end_date: null
 })
 
+const questionForm = ref({
+    description: '',
+    type: '',
+    quiz_id: null,
+    choices: '',
+    answer: ''
+})
+
 const errors = ref([]);
 const rules = {
     title: {
@@ -163,6 +197,7 @@ const rules = {
 };
 
 const questions = ref([]);
+const instruction = ref('');
 
 const alertQuiz = ref(null);
 const modalSetting = ref(null);
@@ -183,7 +218,7 @@ onMounted(async () => {
         
         // quiz data to model
         quizForm.value.title = quizStore.quiz.title;
-        quizForm.value.instruction = quizStore.quiz.instruction;
+        instruction.value = quizStore.quiz.instruction;
         quizForm.value.created_by = quizStore.quiz.created_by;
 
         // quiz setting data to model
