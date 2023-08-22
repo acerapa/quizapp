@@ -1,4 +1,4 @@
-import { StateKeys, getState, saveState } from '../utils/helpers'
+import { StateKeys, getState, saveState, removeState } from '../utils/helpers'
 
 export function APIHandler (url, method = HTTPMethods.GET, data = null, headers = null) {
   const basePath = 'http://localhost:8000/api/'
@@ -43,6 +43,8 @@ export const verfiyToken = async () => {
     console.clear();
     const refreshResponse = await APIHandler('users/token/verify', HTTPMethods.POST, { token: refresh })
     if (refreshResponse.status !== 200) {
+      removeState(StateKeys.ACCESS)
+      removeState(StateKeys.REFRESH)
       return false;
 
     } else {

@@ -17,7 +17,9 @@ const props = defineProps({
         required: true
     }
 })
+
 const $editor = ref(null)
+
 onMounted(() => {
     $editor.value = $(editor.value);
 

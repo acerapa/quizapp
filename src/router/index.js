@@ -4,6 +4,9 @@ import HomeView from '../views/Pages/HomeView.vue'
 // routes
 import quizRoutes from './quiz-routes.js'
 
+// middleware
+import { isAuthenticated } from '../middleware/middleware.js'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -20,7 +23,8 @@ const router = createRouter({
       name: 'dashboard',
       component: () => import('../views/Pages/DashboardPage.vue'),
       meta: {
-        title: 'Quiz App | Dashboard'
+        title: 'Quiz App | Dashboard',
+        requiresAuth: true
       }
     },
     {
@@ -28,7 +32,8 @@ const router = createRouter({
       name: 'files',
       component: () => import('../views/Pages/FilesPage.vue'),
       meta: {
-        title: 'Quiz App | Files'
+        title: 'Quiz App | Files',
+        requiresAuth: true
       }
     },
     {
@@ -57,6 +62,18 @@ const router = createRouter({
     },
     ...quizRoutes
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth) {
+
+    // check auth
+    if (isAuthenticated()) next()
+    else next({ name: 'login' })
+
+  } else {
+    next()
+  }
 })
 
 export default router
