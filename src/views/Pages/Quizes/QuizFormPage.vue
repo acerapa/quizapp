@@ -62,17 +62,32 @@
                     <div class="py-2">
                         <label for="">Type</label>
                         <div class="text-start">
-                            <select name="question" id="" :class="[{ 'border-red-600': errors.type && errors.type.length }, 'border', 'py-2', 'px-4', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']">
-                                <option class="py-2" value="">Choose Question Type</option>
-                                <option value="">Multiple Choice</option>
-                                <option value="">Enumeration</option>
-                                <option value="">Explanation</option>
-                                <option value="">Select</option>
-                                <option value="">True or False</option>
+                            <select name="question" v-model="questionForm.type" id="" :class="[{ 'border-red-600': errors.type && errors.type.length }, 'border', 'py-2', 'px-4', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']">
+                                <option value="multiple-choice">Multiple Choice</option>
+                                <option value="enumeration">Enumeration</option>
+                                <option value="explanation">Explanation</option>
+                                <option value="select">Select</option>
+                                <option value="true-or-false">True or False</option>
                             </select>
                             <small :class="['text-red-600', { 'opacity-100':errors.type && errors.type.length, 'opacity-0': !(errors.type && errors.type.length) },]">* {{
                                 errors.type && errors.type.length ? errors.type[0] : '' }}</small>
                         </div>
+                    </div>
+                    <div class="py-2" v-if="questionForm.type == 'multiple-choice'">
+                        <button class="bg-blue-500 text-white px-2 py-1 rounded block ml-auto" @click="addNewChoices"><span class="font-semibold text-lg">&plus;</span> Add</button>
+                        <div class="grid grid-cols-12 mt-2 items-center gap-2" v-for="(index, choice) in choices" :key="choice">
+                            <label for="" class="col-span-1">{{ choice }}.</label>
+                            <input type="text" v-model="choices[choice]" :class="['border p-2 rounded-md block mt-2 w-full focus:outline outline-gray-200 outline-1 col-span-10']">
+                            <span :class="['col-span-1 font-semibold text-xl cursor-pointer', { 'hidden' : Object.keys(choices).length <= 2 }]" @click="deleteChoice(choice)">&times;</span>
+                        </div>
+                    </div>
+
+                    <div class="py-2 mt-2" v-if="questionForm.type == 'multiple-choice'">
+                        <label for="">Answer</label>
+                        <select name="" id="" class="border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1">
+                            <option value="">Select Answer</option>
+                            <option value="" v-for="(index, choice) in choices" :key="choice">{{ choice }}</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -177,10 +192,17 @@ const quizSettingForm = ref({
 
 const questionForm = ref({
     description: '',
-    type: '',
+    type: 'multiple-choice',
     quiz_id: null,
     choices: '',
     answer: ''
+})
+
+const choices = ref({
+    A: '',
+    B: '',
+    C: '',
+    D: ''
 })
 
 const errors = ref([]);
@@ -307,4 +329,25 @@ const onAlertClosed = () => {
     console.log('Alert closed')
 }
 
+
+// add new choices
+const addNewChoices = () => {
+    const letters = Object.keys(choices.value);
+    choices.value[String.fromCharCode(letters[letters.length - 1].charCodeAt() + 1)] = ''
+}
+
+// delete choices
+const deleteChoice = (key) => {
+    let choiceStart = 'A'
+
+    delete choices.value[key]
+
+    const values = Object.values(choices.value)
+    choices.value = {}
+
+    values.forEach(value => {
+        choices.value[choiceStart] = value
+        choiceStart = String.fromCharCode(choiceStart.charCodeAt() + 1)
+    })
+}
 </script>
