@@ -33,6 +33,12 @@ export const validate = function (model, r) {
   return errors
 }
 
+/**
+ * Checks if there is rule validated
+ * 
+ * @param {*} errors 
+ * @returns 
+ */
 export const hasError = function (errors) {
   let isError = false;
   const keys = Object.keys(errors);

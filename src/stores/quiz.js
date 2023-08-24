@@ -61,6 +61,24 @@ export const useQuizStore = defineStore('quiz', {
             });
             
             return response;
+        },
+
+        async createQuizQuestion() {
+            const isVerfied = await verfiyToken();
+            if (!isVerfied) {
+                console.log('need login');
+                return
+            }
+
+            const response = await APIHandler(`quizes/questions/`, HTTPMethods.POST, null, {
+                Authorization: `Bearer ${ getState(StateKeys.ACCESS) }`
+            });
+
+            return response;
+        },
+
+        resetQuizState() {
+            this.quiz = null;
         }
     },
     getters: {},

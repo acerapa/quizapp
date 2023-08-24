@@ -1,19 +1,14 @@
 <template>
     <SideNav />
     <div class="ml-60 p-5">
-        <AlertComponent 
-            class="absolute top-2 right-2 z-40" 
-            :code="alertConfig.code" 
-            :message="alertConfig.message" 
-            :fade-out-time="alertConfig.fadeOutTime" 
-            ref="alertQuiz"
-            @fade-out="onAlertClosed"
-        />
+        <AlertComponent class="absolute top-2 right-2 z-40" :code="alertConfig.code" :message="alertConfig.message"
+            :fade-out-time="alertConfig.fadeOutTime" ref="alertQuiz" @fade-out="onAlertClosed" />
         <ModalComponent position="top-center" ref="modalSetting">
             <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
                 <div class="flex items-center justify-between">
                     <h1 class="text-xl font-bold">Quiz Settings</h1>
-                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuizSettingModal" alt="" srcset="">
+                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuizSettingModal"
+                        alt="" srcset="">
                 </div>
                 <div class="mt-5">
                     <div class="py-2">
@@ -26,20 +21,25 @@
                     </div>
                     <div class="py-2">
                         <label for="participants_limit">Participants Limit</label>
-                        <input type="number" v-model="quizSettingForm.participants_limit" class="ml-2 w-20 border focus:outline outline-1 outline-gray-200  rounded p-2">
+                        <input type="number" v-model="quizSettingForm.participants_limit"
+                            class="ml-2 w-20 border focus:outline outline-1 outline-gray-200  rounded p-2">
                     </div>
                     <div class="py-2">
                         <label for="start_date">Start Date</label>
-                        <input type="date" v-model="quizSettingForm.start_date" class="ml-2 w-40 border focus:outline outline-1 outline-gray-200  rounded p-2">
+                        <input type="date" v-model="quizSettingForm.start_date"
+                            class="ml-2 w-40 border focus:outline outline-1 outline-gray-200  rounded p-2">
                     </div>
                     <div class="py-2">
                         <label for="end_date">End Date</label>
-                        <input type="date" v-model="quizSettingForm.end_date" class="ml-2 w-40 border focus:outline outline-1 outline-gray-200  rounded p-2">
+                        <input type="date" v-model="quizSettingForm.end_date"
+                            class="ml-2 w-40 border focus:outline outline-1 outline-gray-200  rounded p-2">
                     </div>
                 </div>
-                <div class="block text-center mt-10">
-                    <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300" @click="closeQuizSettingModal">Cancel</button>
-                    <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300" @click="saveQuizSetting">Save</button>
+                <div class="block text-right mt-10">
+                    <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300"
+                        @click="closeQuizSettingModal">Cancel</button>
+                    <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300"
+                        @click="saveQuizSetting">Save</button>
                 </div>
             </div>
         </ModalComponent>
@@ -47,60 +47,145 @@
             <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
                 <div class="flex items-center justify-between">
                     <h1 class="text-xl font-bold">Quiz Settings</h1>
-                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuestionFormModal" alt="" srcset="">
+                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuestionFormModal"
+                        alt="" srcset="">
                 </div>
                 <div class="mt-5">
                     <div class="py-2">
-                        <label for="">Question</label>
-                        <div class="text-start">
-                            <input type="text" placeholder="Question" v-model="questionForm.description"
-                                :class="[{ 'border-red-600': errors.description && errors.description.length }, 'border', 'p-2', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']" />
-                            <small :class="['text-red-600', { 'opacity-100':errors.description && errors.description.length, 'opacity-0': !(errors.description && errors.description.length) },]">* {{
-                                errors.description && errors.description.length ? errors.description[0] : '' }}</small>
-                        </div>
-                    </div>
-                    <div class="py-2">
                         <label for="">Type</label>
                         <div class="text-start">
-                            <select name="question" v-model="questionForm.type" id="" :class="[{ 'border-red-600': errors.type && errors.type.length }, 'border', 'py-2', 'px-4', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']">
+                            <select name="question" v-model="questionForm.type" id=""
+                                :class="[{ 'border-red-600': errors.type && errors.type.length }, 'border', 'py-2', 'px-4', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']">
                                 <option value="multiple-choice">Multiple Choice</option>
                                 <option value="enumeration">Enumeration</option>
                                 <option value="explanation">Explanation</option>
                                 <option value="select">Select</option>
                                 <option value="true-or-false">True or False</option>
                             </select>
-                            <small :class="['text-red-600', { 'opacity-100':errors.type && errors.type.length, 'opacity-0': !(errors.type && errors.type.length) },]">* {{
-                                errors.type && errors.type.length ? errors.type[0] : '' }}</small>
+                            <small
+                                :class="['text-red-600', { 'opacity-100': errors.type && errors.type.length, 'opacity-0': !(errors.type && errors.type.length) },]">*
+                                {{
+                                    errors.type && errors.type.length ? errors.type[0] : '' }}</small>
                         </div>
                     </div>
+
+                    <div class="py-2">
+                        <label for="">Question</label>
+                        <div class="text-start">
+                            <input type="text" placeholder="Question" v-model="questionForm.description"
+                                :class="[{ 'border-red-600': errors.description && errors.description.length }, 'border', 'p-2', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']" />
+                            <small
+                                :class="['text-red-600', { 'opacity-100': errors.description && errors.description.length, 'opacity-0': !(errors.description && errors.description.length) },]">*
+                                {{
+                                    errors.description && errors.description.length ? errors.description[0] : '' }}</small>
+                        </div>
+                    </div>
+
                     <div class="py-2" v-if="questionForm.type == 'multiple-choice'">
-                        <button class="bg-blue-500 text-white px-2 py-1 rounded block ml-auto" @click="addNewChoices"><span class="font-semibold text-lg">&plus;</span> Add</button>
-                        <div class="grid grid-cols-12 mt-2 items-center gap-2" v-for="(index, choice) in choices" :key="choice">
-                            <label for="" class="col-span-1">{{ choice }}.</label>
-                            <input type="text" v-model="choices[choice]" :class="['border p-2 rounded-md block mt-2 w-full focus:outline outline-gray-200 outline-1 col-span-10']">
-                            <span :class="['col-span-1 font-semibold text-xl cursor-pointer', { 'hidden' : Object.keys(choices).length <= 2 }]" @click="deleteChoice(choice)">&times;</span>
+                        <button class="bg-blue-500 text-white px-2 py-1 rounded block ml-auto" @click="addNewChoices"><span
+                                class="font-semibold text-lg">&plus;</span> Add</button>
+                        <div v-for="(index, choice) in choices">
+                            <div class="grid grid-cols-12 mt-2 items-center gap-2"
+                                :key="choice">
+                                <label for="" class="col-span-1">{{ choice }}.</label>
+                                <input type="text" v-model="choices[choice]"
+                                    :class="['border p-2 rounded-md block mt-2 w-full focus:outline outline-gray-200 outline-1 col-span-10', { 'border border-red-600': errors.multipleChoice }]"> 
+                                <span
+                                    :class="['col-span-1 font-semibold text-xl cursor-pointer', { 'hidden': Object.keys(choices).length <= 2 }]"
+                                    @click="deleteChoice(choice)">&times;</span>
+                            </div>
+                            <small 
+                                :class="['text-red-600 ml-10' , { 'opacity-100': errors.multipleChoice && errors.multipleChoice[choice] && errors.multipleChoice[choice].length, 'opacity-0': !(errors.multipleChoice && errors.multipleChoice[choice] && errors.multipleChoice[choice].length)  } ]">
+                                * {{ (errors.multipleChoice && errors.multipleChoice[choice] && errors.multipleChoice[choice].length) ? errors.multipleChoice[choice][0] : '' }}
+                            </small>
                         </div>
                     </div>
 
                     <div class="py-2 mt-2" v-if="questionForm.type == 'multiple-choice'">
                         <label for="">Answer</label>
-                        <select name="" id="" class="border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1">
+                        <select name="" id=""
+                            :class="['border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1', { 'border border-red-600' : (errors.answer && errors.answer.length)  }]">
                             <option value="">Select Answer</option>
                             <option value="" v-for="(index, choice) in choices" :key="choice">{{ choice }}</option>
                         </select>
+                        <small :class="['text-red-600', { 'opacity-100': (errors.answer && errors.answer.length), 'opacity-0': !(errors.answer && errors.answer.length) }]">
+                            * {{ (errors.answer && errors.answer.length) ? errors.answer[0] : '' }}
+                        </small>
                     </div>
+
+                    <div class="py-2 mt-2" v-if="questionForm.type == 'enumeration'">
+                        <label for="">Answers</label>
+                        <form action="">
+                            <div class="grid grid-cols-12 items-center">
+                                <input type="text"
+                                    :class="['col-span-10 border py-2 px-4 rounded-md block w-[100%] focus:outline outline-gray-200 outline-1', { 'border border-red-600': (errors.enumeration && errors.enumeration.length) }]"
+                                    v-model="enumModel">
+                                <div class="col-span-2 text-right">
+                                    <input type="submit" class="bg-blue-500 text-white px-2 py-2 rounded cursor-pointer"
+                                        value="&plus; Add" @click.prevent="addEnumValues">
+                                </div>
+                            </div>
+                            <small :class="['text-red-600', { 'opacity-100': (errors.enumeration && errors.enumeration.length), 'opacity-0': !(errors.enumeration && errors.enumeration.length) }]">
+                                * {{ (errors.enumeration && errors.enumeration.length) ? errors.enumeration[0] : '' }}
+                            </small>
+                        </form>
+                        <div class="mt-5 flex gap-2 max-w-[600px] flex-wrap">
+                            <div class="grid grid-cols-12 items-center bg-gray-200 p-2 rounded-lg gap-2"
+                                v-for="(enm, index) in enumeration" :key="index">
+                                <p class="col-span-11 break-all">{{ enm }}</p>
+                                <span class="col-span-1 font-semibold text-xl cursor-pointer"
+                                    @click="deleteEnumValue(index)">&times;</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="py-2 mt-2" v-if="questionForm.type == 'true-or-false'">
+                        <label for="">Answer</label>
+                        <select name="" id=""
+                            class="border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1">
+                            <option value="">Select Answer</option>
+                            <option :value="true">True</option>
+                            <option :value="false">False</option>
+                        </select>
+                    </div>
+
+                    <div class="py-2 mt-2" v-if="questionForm.type == 'select'">
+                        <div class="flex justify-between items-center">
+                            <small class="text-yellow-600">Note: Check to select the answers</small>
+                            <button class="bg-blue-500 text-white px-2 py-1 rounded block ml-auto"
+                                @click="addSelectables"><span class="font-semibold text-lg">&plus;</span> Add</button>
+                        </div>
+                        <div class="flex gap-2 items-center mt-2" v-for="(index, slct) in select" :key="slct">
+                            <input type="checkbox">
+                            <input type="text"
+                                :class="['border p-2 rounded-md block w-full focus:outline outline-gray-200 outline-1 col-span-10']"
+                                v-model="select[slct]">
+                            <span
+                                :class="['col-span-1 font-semibold text-xl cursor-pointer', { 'hidden': Object.keys(select).length <= 2 }]"
+                                @click="deleteSelectables(slct)">&times;</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="block text-right mt-10">
+                    <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300"
+                        @click="closeQuestionFormModal">Cancel</button>
+                    <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300"
+                        @click="createQuestion">Save</button>
                 </div>
             </div>
         </ModalComponent>
 
         <h1 class="text-xl font-bold mt-11">Create Quiz</h1>
         <div class="mt-5 max-w-4xl bg-white shadow-md rounded-md p-5">
-            <img src="../../../assets/setting.png" class="w-5 block ml-auto cursor-pointer" @click="showQuizSettingModal" alt="">
+            <img src="../../../assets/setting.png" class="w-5 block ml-auto cursor-pointer" @click="showQuizSettingModal"
+                alt="">
             <label for="title">Title</label>
             <div class="text-start">
-                    <input type="text" placeholder="Title" v-model="quizForm.title"
-                        :class="[{ 'border-red-600': errors.title && errors.title.length }, 'border', 'p-2', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']" />
-                    <small :class="['text-red-600', { 'opacity-100': errors.title && errors.title.length, 'opacity-0': !(errors.title && errors.title.length) },]">* {{
+                <input type="text" placeholder="Title" v-model="quizForm.title"
+                    :class="[{ 'border-red-600': errors.title && errors.title.length }, 'border', 'p-2', 'rounded-md', 'block w-[100%]', 'mt-2', 'focus:outline', 'outline-gray-200', ' outline-1']" />
+                <small
+                    :class="['text-red-600', { 'opacity-100': errors.title && errors.title.length, 'opacity-0': !(errors.title && errors.title.length) },]">*
+                    {{
                         errors.title && errors.title.length ? errors.title[0] : '' }}</small>
             </div>
             <div class="text-start">
@@ -108,18 +193,23 @@
                 <div :class="[{ 'border-red-600': errors.instruction && errors.instruction.length }, 'rounded']">
                     <EditorComponent @update:content="editorUpdateContent" :value="instruction" />
                 </div>
-                <small :class="['text-red-600', { 'opacity-100': errors.instruction && errors.instruction.length, 'opacity-0': !(errors.instruction && errors.instruction.length) },]">* {{
-                    errors.instruction && errors.instruction.length ? errors.instruction[0] : '' }}</small>
+                <small
+                    :class="['text-red-600', { 'opacity-100': errors.instruction && errors.instruction.length, 'opacity-0': !(errors.instruction && errors.instruction.length) },]">*
+                    {{
+                        errors.instruction && errors.instruction.length ? errors.instruction[0] : '' }}</small>
             </div>
-            
+
             <div class="mt-5 flex justify-end gap-2">
-                <button class="block bg-green-500 text-white px-5 py-2 rounded hover:bg-green-300" @click="back">Back</button>
-                <button class="block bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-300" @click="createQuiz">Save</button>
+                <button class="block bg-green-500 text-white px-5 py-2 rounded hover:bg-green-300"
+                    @click="back">Back</button>
+                <button class="block bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-300"
+                    @click="createQuiz">Save</button>
             </div>
         </div>
-        <div class="my-16">
-            <button class="bg-[#01b9ff] hover:bg-blue-300 text-white py-2 px-4 rounded-md" @click="showQuestionFormModal">Add Questions</button>
-            <div class="sm:overflow-x-auto px-5 mt-5">
+        <div class="my-16 max-w-4xl">
+            <button class="bg-[#01b9ff] hover:bg-blue-300 text-white py-2 px-4 rounded-md"
+                @click="showQuestionFormModal">Add Questions</button>
+            <div class="sm:overflow-x-auto px-5 mt-5 shadow-md rounded-md">
                 <table class="w-full">
                     <thead>
                         <tr class="font-bold text-base">
@@ -205,8 +295,16 @@ const choices = ref({
     D: ''
 })
 
+const select = ref({
+    A: '',
+    B: '',
+})
+
+const enumModel = ref()
+const enumeration = ref([])
+
 const errors = ref([]);
-const rules = {
+const quizRules = {
     title: {
         required: true,
         min_length: 6,
@@ -217,6 +315,22 @@ const rules = {
         min_length: 20,
     }
 };
+
+const questionRules = {
+    description: {
+        required: true,
+        max_length: 255
+    },
+    type: {
+        required: true
+    },
+    choices: {
+        required: quizForm.value.type != 'explanation'
+    },
+    answer: {
+        required: quizForm.value.type != 'explanation'
+    }
+}
 
 const questions = ref([]);
 const instruction = ref('');
@@ -233,11 +347,11 @@ onMounted(async () => {
     await authStore.getAuthUser();
     quizForm.value.created_by = authStore.user.id;
 
-    
+
     if (route.params.id) {
         await quizStore.getQuiz(route.params.id);
         questions.value = quizStore.quiz.question_set
-        
+
         // quiz data to model
         quizForm.value.title = quizStore.quiz.title;
         instruction.value = quizStore.quiz.instruction;
@@ -249,6 +363,8 @@ onMounted(async () => {
         quizSettingForm.value.participants_limit = quizStore.quiz.quizsetting_set[0].participants_limit;
         quizSettingForm.value.start_date = quizStore.quiz.quizsetting_set[0].start_date;
         quizSettingForm.value.end_date = quizStore.quiz.quizsetting_set[0].end_date;
+    } else {
+        quizStore.resetQuizState()
     }
 })
 
@@ -290,10 +406,10 @@ const back = () => {
 }
 
 const createQuiz = async () => {
-    errors.value = validate(quizForm.value, rules);
+    errors.value = validate(quizForm.value, quizRules);
     if (hasError(errors.value)) {
         alertConfig.value.code = 'danger',
-        alertConfig.value.message = 'Some fields has errors!'
+            alertConfig.value.message = 'Some fields has errors!'
         alertQuiz.value.showAlert()
         return
     };
@@ -325,6 +441,52 @@ const createQuiz = async () => {
     }
 }
 
+const createQuestion = async () => {
+    // validation
+    let choiceRules = {};
+
+    switch (questionForm.value.type) {
+        case 'multiple-choice':
+            let keys = Object.keys(choices.value, choiceRules)
+            keys.forEach(key => {
+                choiceRules[key] = {
+                    required: true
+                }
+            })
+
+            // validate question form fields
+            delete questionRules.choices
+            errors.value = validate(questionForm.value, questionRules)
+
+            // validate question form choices
+            errors.value.multipleChoice = validate(choices.value, choiceRules)
+            break;
+        case 'enumeration':
+            choiceRules = {
+                enumeration: {
+                    min: 1
+                }
+            }
+
+            // validate question form fields
+            delete questionRules.choices
+            delete questionRules.answer
+            errors.value = validate(questionForm.value, questionRules)
+
+            // validate question form choice
+            errors.value.enumeration = validate({ enumeration }, choiceRules).enumeration
+            console.log(errors.value)
+            break;
+    }
+    // if (quizStore.quiz) {
+    //     console.log('Save directly to database');
+    // } else {
+    //     if (questionForm.value.type == 'multiple-choice') {
+    //         console.log(choices.value)
+    //     }
+    // }
+}
+
 const onAlertClosed = () => {
     console.log('Alert closed')
 }
@@ -348,6 +510,39 @@ const deleteChoice = (key) => {
     values.forEach(value => {
         choices.value[choiceStart] = value
         choiceStart = String.fromCharCode(choiceStart.charCodeAt() + 1)
+    })
+}
+
+// add new enum values
+const addEnumValues = () => {
+    if (enumModel.value) {
+        enumeration.value.push(enumModel.value)
+        enumModel.value = ''
+    }
+}
+
+const deleteEnumValue = (index) => {
+    enumeration.value.splice(index, 1)
+}
+
+// add new selectables
+const addSelectables = () => {
+    const letters = Object.keys(select.value);
+    select.value[String.fromCharCode(letters[letters.length - 1].charCodeAt() + 1)] = ''
+}
+
+// delete selectables
+const deleteSelectables = (index) => {
+    let selectStart = 'A'
+
+    delete select.value[index]
+
+    const values = Object.values(select.value)
+    select.value = {}
+
+    values.forEach(value => {
+        select.value[selectStart] = value
+        selectStart = String.fromCharCode(selectStart.charCodeAt() + 1)
     })
 }
 </script>
