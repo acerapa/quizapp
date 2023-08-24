@@ -63,14 +63,14 @@ export const useQuizStore = defineStore('quiz', {
             return response;
         },
 
-        async createQuizQuestion() {
+        async createQuizQuestion(question) {
             const isVerfied = await verfiyToken();
             if (!isVerfied) {
                 console.log('need login');
                 return
             }
 
-            const response = await APIHandler(`quizes/questions/`, HTTPMethods.POST, null, {
+            const response = await APIHandler(`quizes/question/`, HTTPMethods.POST, question, {
                 Authorization: `Bearer ${ getState(StateKeys.ACCESS) }`
             });
 

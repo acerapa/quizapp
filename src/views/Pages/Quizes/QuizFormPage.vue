@@ -1,8 +1,8 @@
 <template>
     <SideNav />
+    <AlertComponent class="absolute top-2 right-2 z-40" :code="alertConfig.code" :message="alertConfig.message"
+        :fade-out-time="alertConfig.fadeOutTime" ref="alertQuiz" @fade-out="onAlertClosed" />
     <div class="ml-60 p-5">
-        <AlertComponent class="absolute top-2 right-2 z-40" :code="alertConfig.code" :message="alertConfig.message"
-            :fade-out-time="alertConfig.fadeOutTime" ref="alertQuiz" @fade-out="onAlertClosed" />
         <ModalComponent position="top-center" ref="modalSetting">
             <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
                 <div class="flex items-center justify-between">
@@ -46,7 +46,7 @@
         <ModalComponent position="top-center" ref="modalQuestionForm">
             <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
                 <div class="flex items-center justify-between">
-                    <h1 class="text-xl font-bold">Quiz Settings</h1>
+                    <h1 class="text-xl font-bold">Add Question</h1>
                     <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuestionFormModal"
                         alt="" srcset="">
                 </div>
@@ -89,7 +89,7 @@
                                 :key="choice">
                                 <label for="" class="col-span-1">{{ choice }}.</label>
                                 <input type="text" v-model="choices[choice]"
-                                    :class="['border p-2 rounded-md block mt-2 w-full focus:outline outline-gray-200 outline-1 col-span-10', { 'border border-red-600': errors.multipleChoice }]"> 
+                                    :class="['border p-2 rounded-md block mt-2 w-full focus:outline outline-gray-200 outline-1 col-span-10', { 'border border-red-600': (errors.multipleChoice && hasError(errors.multipleChoice)) }]"> 
                                 <span
                                     :class="['col-span-1 font-semibold text-xl cursor-pointer', { 'hidden': Object.keys(choices).length <= 2 }]"
                                     @click="deleteChoice(choice)">&times;</span>
@@ -103,10 +103,10 @@
 
                     <div class="py-2 mt-2" v-if="questionForm.type == 'multiple-choice'">
                         <label for="">Answer</label>
-                        <select name="" id=""
+                        <select name="Answer" id="" v-model="questionForm.answer"
                             :class="['border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1', { 'border border-red-600' : (errors.answer && errors.answer.length)  }]">
                             <option value="">Select Answer</option>
-                            <option value="" v-for="(index, choice) in choices" :key="choice">{{ choice }}</option>
+                            <option :value="choice" v-for="(index, choice) in choices" :key="choice">{{ choice }}</option>
                         </select>
                         <small :class="['text-red-600', { 'opacity-100': (errors.answer && errors.answer.length), 'opacity-0': !(errors.answer && errors.answer.length) }]">
                             * {{ (errors.answer && errors.answer.length) ? errors.answer[0] : '' }}
@@ -155,14 +155,24 @@
                             <button class="bg-blue-500 text-white px-2 py-1 rounded block ml-auto"
                                 @click="addSelectables"><span class="font-semibold text-lg">&plus;</span> Add</button>
                         </div>
-                        <div class="flex gap-2 items-center mt-2" v-for="(index, slct) in select" :key="slct">
-                            <input type="checkbox">
-                            <input type="text"
-                                :class="['border p-2 rounded-md block w-full focus:outline outline-gray-200 outline-1 col-span-10']"
-                                v-model="select[slct]">
-                            <span
-                                :class="['col-span-1 font-semibold text-xl cursor-pointer', { 'hidden': Object.keys(select).length <= 2 }]"
-                                @click="deleteSelectables(slct)">&times;</span>
+                        <div v-for="(index, slct) in select" :key="slct">
+                            <div class="flex gap-2 items-center mt-2">
+                                <input type="checkbox" @change="selectables(slct, $event)">
+                                <input type="text"
+                                    :class="['border p-2 rounded-md block w-full focus:outline outline-gray-200 outline-1 col-span-10', { 'border border-red-600': (errors.select && errors.select[slct].length) }]"
+                                    v-model="select[slct]">
+                                <span
+                                    :class="['col-span-1 font-semibold text-xl cursor-pointer', { 'hidden': Object.keys(select).length <= 2 }]"
+                                    @click="deleteSelectables(slct)">&times;</span>
+                            </div>
+                            <small :class="['text-red-600', { 'opacity-100': (errors.select && errors.select[slct].length), 'opacity-0': !(errors.select && errors.select[slct].length)}]">
+                                * {{ (errors.select && errors.select[slct].length) ? errors.select[slct][0] : '' }}
+                            </small>
+                        </div>
+                        <div>
+                            <small :class="['text-red-600', { 'opacity-100': (errors.select && !hasError(errors.select) == true && !selected.length), 'opacity-0': !(errors.select && !hasError(errors.select) == true && !selected.length) }]">
+                                * {{ (errors.select && !hasError(errors.select) == true && !selected.length) ? 'Please check correct answer atleast one!' : '' }}
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -221,7 +231,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(question, index) in questions" :key="index">
-                            <td class="border-b text-start px-2 py-2">{{ question.id }}</td>
+                            <td class="border-b text-start px-2 py-2">{{ index + 1 }}</td>
                             <td class="border-b text-start px-2 py-2">{{ question.description }}</td>
                             <td class="border-b text-start px-2 py-2">{{ question.type }}</td>
                             <td class="border-b text-start px-2 py-2">View</td>
@@ -238,11 +248,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { validate, hasError } from '@/utils/validator';
 import { useQuizStore } from '@/stores/quiz'
 import { useAuthStore } from '@/stores/auth';
 import { useRoute, useRouter } from 'vue-router';
+import { saveState } from '@/utils/helpers'
 // components
 import SideNav from '@/components/SideNav.vue';
 import AlertComponent from '@/components/AlertComponent.vue';
@@ -300,6 +311,8 @@ const select = ref({
     B: '',
 })
 
+const selected = ref([]);
+
 const enumModel = ref()
 const enumeration = ref([])
 
@@ -344,25 +357,14 @@ const modalQuestionForm = ref(null);
  ===========================================================================*/
 
 onMounted(async () => {
+    console.log("onMounted")
     await authStore.getAuthUser();
     quizForm.value.created_by = authStore.user.id;
 
 
     if (route.params.id) {
         await quizStore.getQuiz(route.params.id);
-        questions.value = quizStore.quiz.question_set
-
-        // quiz data to model
-        quizForm.value.title = quizStore.quiz.title;
-        instruction.value = quizStore.quiz.instruction;
-        quizForm.value.created_by = quizStore.quiz.created_by;
-
-        // quiz setting data to model
-        quizSettingForm.value.is_active = quizStore.quiz.quizsetting_set[0].is_active;
-        quizSettingForm.value.is_shuffle = quizStore.quiz.quizsetting_set[0].is_shuffle;
-        quizSettingForm.value.participants_limit = quizStore.quiz.quizsetting_set[0].participants_limit;
-        quizSettingForm.value.start_date = quizStore.quiz.quizsetting_set[0].start_date;
-        quizSettingForm.value.end_date = quizStore.quiz.quizsetting_set[0].end_date;
+        populateData()
     } else {
         quizStore.resetQuizState()
     }
@@ -389,7 +391,6 @@ const closeQuestionFormModal = () => {
 const editorUpdateContent = (content) => {
     quizForm.value.instruction = content;
 }
-
 
 const saveQuizSetting = async () => {
     quiz.value.setting = quizSettingForm.value;
@@ -444,10 +445,11 @@ const createQuiz = async () => {
 const createQuestion = async () => {
     // validation
     let choiceRules = {};
+    let keys = [];
 
     switch (questionForm.value.type) {
         case 'multiple-choice':
-            let keys = Object.keys(choices.value, choiceRules)
+            keys = Object.keys(choices.value, choiceRules)
             keys.forEach(key => {
                 choiceRules[key] = {
                     required: true
@@ -460,11 +462,27 @@ const createQuestion = async () => {
 
             // validate question form choices
             errors.value.multipleChoice = validate(choices.value, choiceRules)
+
+            // check if has errors
+            let errorCopy = {...errors.value}
+            delete errorCopy.multipleChoice
+
+            if (hasError(errorCopy) && hasError(errors.value.multipleChoice)) {
+                return;
+            }
+
+            questionForm.value.choices = JSON.stringify(choices.value)
             break;
         case 'enumeration':
             choiceRules = {
                 enumeration: {
-                    min: 1
+                    min_length: 1
+                }
+            }
+
+            let customMessage = {
+                enumeration: {
+                    min_length: 'Please add atleast one item for enumeration!'
                 }
             }
 
@@ -474,23 +492,57 @@ const createQuestion = async () => {
             errors.value = validate(questionForm.value, questionRules)
 
             // validate question form choice
-            errors.value.enumeration = validate({ enumeration }, choiceRules).enumeration
-            console.log(errors.value)
+            errors.value.enumeration = validate({enumeration: enumeration.value}, choiceRules, customMessage).enumeration
+            break;
+        case 'select':
+            keys = Object.keys(select.value)
+            keys.forEach(key => {
+                choiceRules[key] = {
+                    required: true
+                }
+            })
+            
+            // validate question form fields
+            delete questionRules.choices
+            errors.value = validate(questionForm.value, questionRules)
+
+            // validate question form choices
+            errors.value.select = validate(select.value, choiceRules)
+            
+            if (!hasError(errors.value.select) && !selected.value.length) {
+                return
+            }
             break;
     }
-    // if (quizStore.quiz) {
-    //     console.log('Save directly to database');
-    // } else {
-    //     if (questionForm.value.type == 'multiple-choice') {
-    //         console.log(choices.value)
-    //     }
-    // }
+
+    let response = {}
+    if (quizStore.quiz) {
+        questionForm.value.quiz_id = quizStore.quiz.id
+        response = await quizStore.createQuizQuestion(questionForm.value)
+        
+        if (response.status == 200 || reset.status == 201) {
+            alertConfig.value.code = 'success'
+            alertConfig.value.message = 'Question created successfully!'
+            alertConfig.value.fadeOutTime = 3000
+
+            window.scrollTo(0, 0)
+
+            alertQuiz.value.showAlert()
+            await quizStore.getQuiz(quizStore.quiz.id)
+            modalQuestionForm.value.closeModal()
+            populateData()
+        }
+    } else {
+        questions.value.push(questionForm.value)
+
+        saveState('questions', questions.value)
+    }
+    reset()
 }
 
 const onAlertClosed = () => {
     console.log('Alert closed')
 }
-
 
 // add new choices
 const addNewChoices = () => {
@@ -544,5 +596,51 @@ const deleteSelectables = (index) => {
         select.value[selectStart] = value
         selectStart = String.fromCharCode(selectStart.charCodeAt() + 1)
     })
+}
+
+// check selectables
+const selectables = (index, event) => {
+    // selected.value.push(index)
+    if (event.target.checked) {
+        selected.value.push(index)
+    } else {
+        if (selected.value.includes(index)) {
+            selected.value.splice(selected.value.indexOf(index), 1)
+        }
+    }
+}
+
+const reset = () => {
+    // question
+    questionForm.value = {
+        title: '',
+        instruction: '',
+        created_by: null,
+        type: 'multiple-choice'
+    }
+
+    // multiple choice
+    choices.value = {
+        A: '',
+        B: '',
+        C: '',
+        D: ''
+    }
+}
+
+const populateData = () => {
+    questions.value = quizStore.quiz.question_set
+
+    // quiz data to model
+    quizForm.value.title = quizStore.quiz.title;
+    instruction.value = quizStore.quiz.instruction;
+    quizForm.value.created_by = quizStore.quiz.created_by;
+
+    // quiz setting data to model
+    quizSettingForm.value.is_active = quizStore.quiz.quizsetting_set[0].is_active;
+    quizSettingForm.value.is_shuffle = quizStore.quiz.quizsetting_set[0].is_shuffle;
+    quizSettingForm.value.participants_limit = quizStore.quiz.quizsetting_set[0].participants_limit;
+    quizSettingForm.value.start_date = quizStore.quiz.quizsetting_set[0].start_date;
+    quizSettingForm.value.end_date = quizStore.quiz.quizsetting_set[0].end_date;
 }
 </script>
