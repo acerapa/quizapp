@@ -63,6 +63,20 @@ export const useQuizStore = defineStore('quiz', {
             return response;
         },
 
+        async deleteQuiz(quizId) {
+            const isVerfied = await verfiyToken();
+            if (!isVerfied) {
+                console.log('need login');
+                return
+            }
+
+            const response = await APIHandler(`quizes/${ quizId }/`, HTTPMethods.DELETE, null, {
+                Authorization: `Bearer ${ getState(StateKeys.ACCESS) }`
+            });
+
+            return response;
+        },
+
         async createQuizQuestion(question) {
             const isVerfied = await verfiyToken();
             if (!isVerfied) {
@@ -71,6 +85,20 @@ export const useQuizStore = defineStore('quiz', {
             }
 
             const response = await APIHandler(`quizes/question/`, HTTPMethods.POST, question, {
+                Authorization: `Bearer ${ getState(StateKeys.ACCESS) }`
+            });
+
+            return response;
+        },
+
+        async deleteQuizQuestion(questionId) {
+            const isVerfied = await verfiyToken();
+            if (!isVerfied) {
+                console.log('need login');
+                return
+            }
+
+            const response = await APIHandler(`quizes/question/`, HTTPMethods.DELETE, { 'question_id': questionId }, {
                 Authorization: `Bearer ${ getState(StateKeys.ACCESS) }`
             });
 

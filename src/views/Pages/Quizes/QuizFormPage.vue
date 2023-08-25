@@ -3,11 +3,39 @@
     <AlertComponent class="absolute top-2 right-2 z-40" :code="alertConfig.code" :message="alertConfig.message"
         :fade-out-time="alertConfig.fadeOutTime" ref="alertQuiz" @fade-out="onAlertClosed" />
     <div class="ml-60 p-5">
+
+        <!-- CONFIRMATION MODAL -->
+        <ModalComponent position="top-center" ref="modalConfirm">
+            <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xl font-bold">Confirmation</h1>
+                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="modalConfirm.closeModal()"
+                        alt="" srcset="">
+                </div>
+                <hr class="mt-4">
+                <div class="mt-4">
+                    <p class="bg-yellow-300 p-2 mb-2">Warning :</p>
+                    <p>Some questions are saved locally. By leaving the form all data saved locally will be deleted.</p>
+                    <p>By saving the quiz you will also save the unsave questions.</p>
+                    <p class="mt-5 font-semibold">Would you like to continue creating the exam?</p>
+                    <small>(Please click <span class="text-green-500 font-semibold">"Ok"</span> if you want to continue creating the quiz and otherwise <span class="text-red-500 font-semibold">"No"</span>)</small>
+
+                    <div class="block text-right mt-10">
+                        <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300"
+                            @click="confirmationModalRes(false)">No</button>
+                        <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300"
+                            @click="confirmationModalRes(true)">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </ModalComponent>
+        
+        <!-- QUIZ SETTING MODAL -->
         <ModalComponent position="top-center" ref="modalSetting">
             <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
                 <div class="flex items-center justify-between">
                     <h1 class="text-xl font-bold">Quiz Settings</h1>
-                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuizSettingModal"
+                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="modalSetting.closeModal()"
                         alt="" srcset="">
                 </div>
                 <div class="mt-5">
@@ -37,17 +65,19 @@
                 </div>
                 <div class="block text-right mt-10">
                     <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300"
-                        @click="closeQuizSettingModal">Cancel</button>
+                        @click="modalSetting.closeModal()">Cancel</button>
                     <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300"
                         @click="saveQuizSetting">Save</button>
                 </div>
             </div>
         </ModalComponent>
+
+        <!-- QUIZ QUESTION MODAL -->
         <ModalComponent position="top-center" ref="modalQuestionForm">
             <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
                 <div class="flex items-center justify-between">
                     <h1 class="text-xl font-bold">Add Question</h1>
-                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="closeQuestionFormModal"
+                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="modalQuestionForm.closeModal()"
                         alt="" srcset="">
                 </div>
                 <div class="mt-5">
@@ -178,7 +208,7 @@
                 </div>
                 <div class="block text-right mt-10">
                     <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300"
-                        @click="closeQuestionFormModal">Cancel</button>
+                        @click="modalQuestionForm.closeModal()">Cancel</button>
                     <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300"
                         @click="createQuestion">Save</button>
                 </div>
@@ -187,7 +217,7 @@
 
         <h1 class="text-xl font-bold mt-11">Create Quiz</h1>
         <div class="mt-5 max-w-4xl bg-white shadow-md rounded-md p-5">
-            <img src="../../../assets/setting.png" class="w-5 block ml-auto cursor-pointer" @click="showQuizSettingModal"
+            <img src="../../../assets/setting.png" class="w-5 block ml-auto cursor-pointer" @click="modalSetting.showModal()"
                 alt="">
             <label for="title">Title</label>
             <div class="text-start">
@@ -218,7 +248,7 @@
         </div>
         <div class="my-16 max-w-4xl">
             <button class="bg-[#01b9ff] hover:bg-blue-300 text-white py-2 px-4 rounded-md"
-                @click="showQuestionFormModal">Add Questions</button>
+                @click="modalQuestionForm.showModal()">Add Questions</button>
             <div class="sm:overflow-x-auto px-5 mt-5 shadow-md rounded-md">
                 <table class="w-full">
                     <thead>
@@ -234,7 +264,14 @@
                             <td class="border-b text-start px-2 py-2">{{ index + 1 }}</td>
                             <td class="border-b text-start px-2 py-2">{{ question.description }}</td>
                             <td class="border-b text-start px-2 py-2">{{ question.type }}</td>
-                            <td class="border-b text-start px-2 py-2">View</td>
+                            <td class="border-b text-start px-2 py-2 flex gap-1">
+                                <button class="bg-blue-500 p-1 rounded shadow">
+                                    <img class="invert w-5 h-5" src="../../../assets/view.png" alt="">
+                                </button>
+                                <button class="bg-red-500 p-1 rounded shadow">
+                                    <img class="invert w-5 h-5" src="../../../assets/trash.png" alt="">
+                                </button>
+                            </td>
                         </tr>
 
                         <tr v-if="!questions.length">
@@ -248,12 +285,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { validate, hasError } from '@/utils/validator';
 import { useQuizStore } from '@/stores/quiz'
 import { useAuthStore } from '@/stores/auth';
-import { useRoute, useRouter } from 'vue-router';
-import { saveState } from '@/utils/helpers'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
+
 // components
 import SideNav from '@/components/SideNav.vue';
 import AlertComponent from '@/components/AlertComponent.vue';
@@ -270,6 +307,10 @@ const authStore = useAuthStore();
 
 const route = useRoute();
 const router = useRouter();
+
+const isQuizCreate = ref(false);
+
+const nextRoute = ref('');
 
 const alertConfig = ref({
     code: 'success',
@@ -295,7 +336,7 @@ const questionForm = ref({
     description: '',
     type: 'multiple-choice',
     quiz_id: null,
-    choices: '',
+    choices: null,
     answer: ''
 })
 
@@ -349,6 +390,7 @@ const questions = ref([]);
 const instruction = ref('');
 
 const alertQuiz = ref(null);
+const modalConfirm = ref(null);
 const modalSetting = ref(null);
 const modalQuestionForm = ref(null);
 
@@ -357,7 +399,6 @@ const modalQuestionForm = ref(null);
  ===========================================================================*/
 
 onMounted(async () => {
-    console.log("onMounted")
     await authStore.getAuthUser();
     quizForm.value.created_by = authStore.user.id;
 
@@ -370,23 +411,32 @@ onMounted(async () => {
     }
 })
 
-// modal start
-const showQuizSettingModal = () => {
-    modalSetting.value.showModal();
-}
+onBeforeRouteLeave((to, from, next) => {
+    if (!quizStore.quiz) {
+        if (questions.value.length > 0) {
+            modalConfirm.value.showModal()
+            nextRoute.value = to.name
+            return;
+        }
+    }
 
-const closeQuizSettingModal = () => {
-    modalSetting.value.closeModal();
-}
+    window.onbeforeunload = null;
+    next()
+})
 
-const showQuestionFormModal = () => {
-    modalQuestionForm.value.showModal();
-}
-
-const closeQuestionFormModal = () => {
-    modalQuestionForm.value.closeModal();
-}
-// modal end
+watch(questions.value, () => {
+    if (!quizStore.quiz) {
+        if (questions.value.length > 0) {
+            window.onbeforeunload = function(e) {
+                return true;
+            };
+        } else {
+            window.onbeforeinput = function(e) {
+                return false;
+            }
+        }
+    }
+})
 
 const editorUpdateContent = (content) => {
     quizForm.value.instruction = content;
@@ -417,6 +467,9 @@ const createQuiz = async () => {
 
     quiz.value.quiz = quizForm.value;
     quiz.value.setting = quizSettingForm.value;
+    if (!route.params.id) {
+        quiz.value.questions = questions.value
+    }
 
     let response = null;
     if (route.params.id) {
@@ -424,12 +477,17 @@ const createQuiz = async () => {
         alertConfig.value.code = 'success'
         alertConfig.value.message = 'Successfully updated!'
         alertConfig.value.fadeOutTime = 1000
+        isQuizCreate.value = false
     } else {
         response = await quizStore.createQuiz(quiz.value);
         alertConfig.value.code = 'success'
         alertConfig.value.message = 'Successfully Created!'
         alertConfig.value.fadeOutTime = 1000
+        isQuizCreate.value = true
     }
+
+    // scroll to top
+    window.scrollTo(0, 0);
 
     if ((response.status === 201 || response.status === 200)) {
         alertQuiz.value.showAlert()
@@ -493,6 +551,9 @@ const createQuestion = async () => {
 
             // validate question form choice
             errors.value.enumeration = validate({enumeration: enumeration.value}, choiceRules, customMessage).enumeration
+
+            // set question form answer
+            questionForm.value.answer = JSON.stringify(enumeration.value)
             break;
         case 'select':
             keys = Object.keys(select.value)
@@ -533,15 +594,23 @@ const createQuestion = async () => {
             populateData()
         }
     } else {
-        questions.value.push(questionForm.value)
+        alertConfig.value.code = 'success'
+        alertConfig.value.message = 'Question is save locally!'
+        alertConfig.value.fadeOutTime = 3000
 
-        saveState('questions', questions.value)
+        window.scrollTo(0, 0)
+
+        alertQuiz.value.showAlert()
+        questions.value.push(questionForm.value)
+        modalQuestionForm.value.closeModal()
     }
     reset()
 }
 
 const onAlertClosed = () => {
-    console.log('Alert closed')
+    if (isQuizCreate.value) {
+        router.back()
+    }
 }
 
 // add new choices
@@ -642,5 +711,16 @@ const populateData = () => {
     quizSettingForm.value.participants_limit = quizStore.quiz.quizsetting_set[0].participants_limit;
     quizSettingForm.value.start_date = quizStore.quiz.quizsetting_set[0].start_date;
     quizSettingForm.value.end_date = quizStore.quiz.quizsetting_set[0].end_date;
+}
+
+const confirmationModalRes = (response) => {
+    if (!response) {
+        questions.value = []
+        modalConfirm.value.closeModal()
+        router.push({ name: nextRoute.value })
+        return
+    }
+
+    modalConfirm.value.closeModal()
 }
 </script>
