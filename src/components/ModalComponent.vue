@@ -1,5 +1,5 @@
 <template>
-    <div ref="overlay" :class="['overlay fixed bg-gray-500 w-screen h-screen z-20 top-0 left-0 bg-opacity-50 grid', ...modalPosition[position], {'block': show, 'hidden': !show}]">
+    <div ref="overlay" :class="['overlay fixed bg-gray-500 w-screen h-screen z-20 top-0 left-0 bg-opacity-50 overflow-y-auto grid', ...modalPosition[position], {'block': show, 'hidden': !show}]">
         <div ref="modalCont" :class="['rounded-lg min-w-[500px] w-fit']">
             <slot></slot>
         </div>
