@@ -29,6 +29,27 @@
                 </div>
             </div>
         </ModalComponent>
+
+        <!-- DELETE CONFERMATION MODAL -->
+        <ModalComponent position="top-center" ref="deleteModalConfirm">
+            <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xl font-bold">Confirmation</h1>
+                    <img src="../../../assets/close.png" class="w-5 h-5 cursor-pointer" @click="deleteModalConfirm.closeModal()"
+                        alt="" srcset="">
+                </div>
+                <hr class="mt-4">
+                <div class="mt-4">
+                    <p>Are you sure you want to delete this question?</p>
+                    <div class="block text-right mt-10">
+                        <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300"
+                            @click="deleteConfirmationModalRes(false)">No</button>
+                        <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300"
+                            @click="deleteConfirmationModalRes(true)">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </ModalComponent>
         
         <!-- QUIZ SETTING MODAL -->
         <ModalComponent position="top-center" ref="modalSetting">
@@ -144,7 +165,15 @@
                     </div>
 
                     <div class="py-2 mt-2" v-if="questionForm.type == 'enumeration'">
-                        <label for="">Answers</label>
+                        <label for="">Number of matched</label>
+                        <small class="text-yellow-600 block">Note: Number of answer matched to be considered correct</small>
+                        <input type="number" v-model="questionForm.answer"
+                            :class="['border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1', { 'border border-red-600' : (errors.answer && errors.answer.length)  }]">
+                        <small :class="['text-red-600', { 'opacity-100': errors.answer && errors.answer.length, 'opacity-0': !(errors.answer && errors.answer.length) }]"></small>
+                    </div>
+
+                    <div class="py-2 mt-2" v-if="questionForm.type == 'enumeration'">
+                        <label for="">Choices</label>
                         <form action="">
                             <div class="grid grid-cols-12 items-center">
                                 <input type="text"
@@ -265,10 +294,10 @@
                             <td class="border-b text-start px-2 py-2">{{ question.description }}</td>
                             <td class="border-b text-start px-2 py-2">{{ question.type }}</td>
                             <td class="border-b text-start px-2 py-2 flex gap-1">
-                                <button class="bg-blue-500 p-1 rounded shadow">
+                                <button class="bg-blue-500 p-1 rounded shadow" @click="viewQuestion(question)">
                                     <img class="invert w-5 h-5" src="../../../assets/view.png" alt="">
                                 </button>
-                                <button class="bg-red-500 p-1 rounded shadow">
+                                <button class="bg-red-500 p-1 rounded shadow" @click="deleteQuestion(question)">
                                     <img class="invert w-5 h-5" src="../../../assets/trash.png" alt="">
                                 </button>
                             </td>
@@ -309,6 +338,8 @@ const route = useRoute();
 const router = useRouter();
 
 const isQuizCreate = ref(false);
+
+const toDeleteQuestion = ref(null);
 
 const nextRoute = ref('');
 
@@ -393,6 +424,7 @@ const alertQuiz = ref(null);
 const modalConfirm = ref(null);
 const modalSetting = ref(null);
 const modalQuestionForm = ref(null);
+const deleteModalConfirm = ref(null);
 
 /** ========================================================================
  * METHODS
@@ -412,11 +444,13 @@ onMounted(async () => {
 })
 
 onBeforeRouteLeave((to, from, next) => {
-    if (!quizStore.quiz) {
-        if (questions.value.length > 0) {
-            modalConfirm.value.showModal()
-            nextRoute.value = to.name
-            return;
+    if (!isQuizCreate.value) {
+        if (!quizStore.quiz) {
+            if (questions.value.length > 0) {
+                modalConfirm.value.showModal()
+                nextRoute.value = to.name
+                return;
+            }
         }
     }
 
@@ -431,9 +465,7 @@ watch(questions.value, () => {
                 return true;
             };
         } else {
-            window.onbeforeinput = function(e) {
-                return false;
-            }
+            window.onbeforeunload = null
         }
     }
 })
@@ -490,6 +522,7 @@ const createQuiz = async () => {
     window.scrollTo(0, 0);
 
     if ((response.status === 201 || response.status === 200)) {
+        reset()
         alertQuiz.value.showAlert()
     } else {
         alertConfig.value.code = 'danger'
@@ -546,14 +579,22 @@ const createQuestion = async () => {
 
             // validate question form fields
             delete questionRules.choices
-            delete questionRules.answer
+            questionRules.answer['max'] = enumeration.value.length
             errors.value = validate(questionForm.value, questionRules)
 
             // validate question form choice
             errors.value.enumeration = validate({enumeration: enumeration.value}, choiceRules, customMessage).enumeration
 
             // set question form answer
-            questionForm.value.answer = JSON.stringify(enumeration.value)
+            questionForm.value.choices = JSON.stringify(enumeration.value)
+            break;
+        case 'explanation':
+            // validate question form fields
+            delete questionRules.choices
+            delete questionRules.answer
+            errors.value = validate(questionForm.value, questionRules)
+
+            if (hasError(errors.value)) return
             break;
         case 'select':
             keys = Object.keys(select.value)
@@ -573,6 +614,16 @@ const createQuestion = async () => {
             if (!hasError(errors.value.select) && !selected.value.length) {
                 return
             }
+
+            questionForm.value.choices = JSON.stringify(select.value)
+            questionForm.value.answer = JSON.stringify(selected.value)
+            break;
+        case 'true-or-false':
+            // validate question form fields
+            delete questionRules.choices
+            errors.value = validate(questionForm.value, questionRules)
+            
+            if (hasError(errors.value)) return
             break;
     }
 
@@ -613,13 +664,11 @@ const onAlertClosed = () => {
     }
 }
 
-// add new choices
 const addNewChoices = () => {
     const letters = Object.keys(choices.value);
     choices.value[String.fromCharCode(letters[letters.length - 1].charCodeAt() + 1)] = ''
 }
 
-// delete choices
 const deleteChoice = (key) => {
     let choiceStart = 'A'
 
@@ -634,7 +683,6 @@ const deleteChoice = (key) => {
     })
 }
 
-// add new enum values
 const addEnumValues = () => {
     if (enumModel.value) {
         enumeration.value.push(enumModel.value)
@@ -646,13 +694,11 @@ const deleteEnumValue = (index) => {
     enumeration.value.splice(index, 1)
 }
 
-// add new selectables
 const addSelectables = () => {
     const letters = Object.keys(select.value);
     select.value[String.fromCharCode(letters[letters.length - 1].charCodeAt() + 1)] = ''
 }
 
-// delete selectables
 const deleteSelectables = (index) => {
     let selectStart = 'A'
 
@@ -667,9 +713,7 @@ const deleteSelectables = (index) => {
     })
 }
 
-// check selectables
 const selectables = (index, event) => {
-    // selected.value.push(index)
     if (event.target.checked) {
         selected.value.push(index)
     } else {
@@ -680,6 +724,31 @@ const selectables = (index, event) => {
 }
 
 const reset = () => {
+    // quiz is reset
+    quiz.value = {
+        quiz: {},
+        setting: {},
+        questions: []
+    }
+
+    // question is reset
+    questionForm.value = {
+        description: '',
+        type: 'multiple-choice',
+        quiz_id: null,
+        choices: null,
+        answer: ''
+    }
+
+    // quiz setting is reset
+    quizSettingForm.value = {
+        is_active: false,
+        is_shuffle: false,
+        participants_limit: 0,
+        start_date: null,
+        end_date: null
+    }
+
     // question
     questionForm.value = {
         title: '',
@@ -695,6 +764,12 @@ const reset = () => {
         C: '',
         D: ''
     }
+
+    // enumeration
+    enumeration.value = []
+
+    // errors reset to default
+    errors.value = {}
 }
 
 const populateData = () => {
@@ -722,5 +797,44 @@ const confirmationModalRes = (response) => {
     }
 
     modalConfirm.value.closeModal()
+}
+
+const viewQuestion = (question) => {
+    questionForm.value = question
+    switch (questionForm.value.type) {
+        case 'multiple-choice':
+            choices.value = JSON.parse(questionForm.value.choices)
+            break;
+        case 'enumeration':
+            enumeration.value = JSON.parse(questionForm.value.choices)
+            break;
+        case 'select':
+            console.log(question)
+    }
+    modalQuestionForm.value.showModal()
+}
+
+const deleteQuestion = (question) => {
+    toDeleteQuestion.value = question
+    deleteModalConfirm.value.showModal()
+}
+
+const deleteConfirmationModalRes = async (res) => {
+    if (res) {
+        if (toDeleteQuestion.value.id) {
+            await quizStore.deleteQuizQuestion(toDeleteQuestion.value.id)
+            questions.value.splice(questions.value.indexOf(toDeleteQuestion.value), 1)
+        } else {
+            questions.value.splice(questions.value.indexOf(toDeleteQuestion.value), 1)
+        }
+
+        alertConfig.value.code = 'success'
+        alertConfig.value.message = 'Question deleted successfully'
+        alertConfig.value.fadeOutTime = 3000
+
+        alertQuiz.value.showAlert()
+    }
+
+    deleteModalConfirm.value.closeModal()
 }
 </script>
