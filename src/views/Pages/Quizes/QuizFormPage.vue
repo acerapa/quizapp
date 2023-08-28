@@ -635,11 +635,17 @@ const createQuestion = async () => {
     let response = {}
     if (quizStore.quiz) {
         questionForm.value.quiz_id = quizStore.quiz.id
-        response = await quizStore.createQuizQuestion(questionForm.value)
+
+        if (!questionForm.value.id) {
+            response = await quizStore.createQuizQuestion(questionForm.value)
+            alertConfig.value.message = 'Question created successfully!'
+        } else {
+            response = await quizStore.updateQuizQuestion(questionForm.value)
+            alertConfig.value.message = 'Question updated successfully!'
+        }
         
         if (response.status == 200 || reset.status == 201) {
             alertConfig.value.code = 'success'
-            alertConfig.value.message = 'Question created successfully!'
             alertConfig.value.fadeOutTime = 3000
 
             window.scrollTo({ top: 0, left: 0, behavior:'smooth' })
