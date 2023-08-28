@@ -200,12 +200,15 @@
 
                     <div class="py-2 mt-2" v-if="questionForm.type == 'true-or-false'">
                         <label for="">Answer</label>
-                        <select name="" id=""
-                            class="border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1">
+                        <select name="" id="" v-model="questionForm.answer"
+                            :class="['border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1', { 'border border-red-600' : (errors.answer && errors.answer.length)  }]">
                             <option value="">Select Answer</option>
-                            <option :value="true">True</option>
-                            <option :value="false">False</option>
+                            <option :value="'true'">True</option>
+                            <option :value="'false'">False</option>
                         </select>
+                        <small :class="['text-red-600', { 'opacity-100': (errors.answer && errors.answer.length), 'opacity-0': !(errors.answer && errors.answer.length) }]">
+                            * {{ (errors.answer && errors.answer.length) ? errors.answer[0] : '' }}
+                        </small>
                     </div>
 
                     <div class="py-2 mt-2" v-if="questionForm.type == 'select'">
@@ -216,16 +219,16 @@
                         </div>
                         <div v-for="(index, slct) in select" :key="slct">
                             <div class="flex gap-2 items-center mt-2">
-                                <input type="checkbox" @change="selectables(slct, $event)">
+                                <input type="checkbox" @change="selectables(slct, $event)" :id="`select-choice-${slct}`">
                                 <input type="text"
-                                    :class="['border p-2 rounded-md block w-full focus:outline outline-gray-200 outline-1 col-span-10', { 'border border-red-600': (errors.select && errors.select[slct].length) }]"
+                                    :class="['border p-2 rounded-md block w-full focus:outline outline-gray-200 outline-1 col-span-10', { 'border border-red-600': (errors.select && errors.select[slct] && errors.select[slct].length) }]"
                                     v-model="select[slct]">
                                 <span
                                     :class="['col-span-1 font-semibold text-xl cursor-pointer', { 'hidden': Object.keys(select).length <= 2 }]"
                                     @click="deleteSelectables(slct)">&times;</span>
                             </div>
-                            <small :class="['text-red-600', { 'opacity-100': (errors.select && errors.select[slct].length), 'opacity-0': !(errors.select && errors.select[slct].length)}]">
-                                * {{ (errors.select && errors.select[slct].length) ? errors.select[slct][0] : '' }}
+                            <small :class="['text-red-600', { 'opacity-100': (errors.select && errors.select[slct] && errors.select[slct].length), 'opacity-0': !(errors.select && errors.select[slct] && errors.select[slct].length)}]">
+                                * {{ (errors.select && errors.select[slct] && errors.select[slct].length) ? errors.select[slct][0] : '' }}
                             </small>
                         </div>
                         <div>
@@ -237,7 +240,7 @@
                 </div>
                 <div class="block text-right mt-10">
                     <button class="bg-red-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-red-300"
-                        @click="modalQuestionForm.closeModal()">Cancel</button>
+                        @click="closeQuestionModal">Cancel</button>
                     <button class="bg-green-500 text-white py-2 px-5 rounded-md ml-auto m-1 hover:bg-green-300"
                         @click="createQuestion">Save</button>
                 </div>
@@ -519,7 +522,7 @@ const createQuiz = async () => {
     }
 
     // scroll to top
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior:'smooth' });
 
     if ((response.status === 201 || response.status === 200)) {
         reset()
@@ -537,6 +540,7 @@ const createQuestion = async () => {
     // validation
     let choiceRules = {};
     let keys = [];
+    let rules = {...questionRules};
 
     switch (questionForm.value.type) {
         case 'multiple-choice':
@@ -548,8 +552,9 @@ const createQuestion = async () => {
             })
 
             // validate question form fields
-            delete questionRules.choices
-            errors.value = validate(questionForm.value, questionRules)
+            delete rules.choices
+
+            errors.value = validate(questionForm.value, rules)
 
             // validate question form choices
             errors.value.multipleChoice = validate(choices.value, choiceRules)
@@ -637,7 +642,7 @@ const createQuestion = async () => {
             alertConfig.value.message = 'Question created successfully!'
             alertConfig.value.fadeOutTime = 3000
 
-            window.scrollTo(0, 0)
+            window.scrollTo({ top: 0, left: 0, behavior:'smooth' })
 
             alertQuiz.value.showAlert()
             await quizStore.getQuiz(quizStore.quiz.id)
@@ -649,7 +654,7 @@ const createQuestion = async () => {
         alertConfig.value.message = 'Question is save locally!'
         alertConfig.value.fadeOutTime = 3000
 
-        window.scrollTo(0, 0)
+        window.scrollTo({ top: 0, left: 0, behavior:'smooth' })
 
         alertQuiz.value.showAlert()
         questions.value.push(questionForm.value)
@@ -765,6 +770,15 @@ const reset = () => {
         D: ''
     }
 
+    // select
+    select.value = {
+        A: '',
+        B: '',
+    }
+
+    // selected
+    selected.value = []
+
     // enumeration
     enumeration.value = []
 
@@ -809,7 +823,18 @@ const viewQuestion = (question) => {
             enumeration.value = JSON.parse(questionForm.value.choices)
             break;
         case 'select':
-            console.log(question)
+            select.value = JSON.parse(questionForm.value.choices)
+            selected.value = JSON.parse(questionForm.value.answer)
+
+            setTimeout(() => {
+                selected.value.forEach(ans => {
+                    document.getElementById(`select-choice-${ans}`).checked = true
+                });
+            }, 100)
+
+            break;
+        case 'true-or-false':
+            break;
     }
     modalQuestionForm.value.showModal()
 }
@@ -835,6 +860,13 @@ const deleteConfirmationModalRes = async (res) => {
         alertQuiz.value.showAlert()
     }
 
+    window.scrollTo({ top: 0, left: 0, behavior:'smooth' })
     deleteModalConfirm.value.closeModal()
+}
+
+// modal
+const closeQuestionModal = () => {
+    reset()
+    modalQuestionForm.value.closeModal()
 }
 </script>
