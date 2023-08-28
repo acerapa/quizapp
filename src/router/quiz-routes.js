@@ -4,7 +4,8 @@ export default [
     name: 'quiz-list',
     component: () => import('../views/Pages/Quizes/QuizListPage.vue'),
     meta: {
-      title: 'Quiz App | Quizes'
+      title: 'Quiz App | Quizes',
+      requiresAuth: true
     }
 
   },
@@ -13,7 +14,8 @@ export default [
     name: 'quiz-edit',
     component: () => import('../views/Pages/Quizes/QuizFormPage.vue'),
     meta: {
-      title: 'Quiz App | Edit Quiz'
+      title: 'Quiz App | Edit Quiz',
+      requiresAuth: true
     }
   },
   {
@@ -21,7 +23,8 @@ export default [
     name: 'quiz-create',
     component: () => import('../views/Pages/Quizes/QuizFormPage.vue'),
     meta: {
-      title: 'Quiz App | Create Quiz'
+      title: 'Quiz App | Create Quiz',
+      requiresAuth: true
     }
   }
 ]
