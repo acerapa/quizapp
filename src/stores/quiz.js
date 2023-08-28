@@ -105,6 +105,22 @@ export const useQuizStore = defineStore('quiz', {
             return response;
         },
 
+        async updateQuizQuestion(question) {
+            question['question_id'] = question.id
+
+            const isVerfied = await verfiyToken();
+            if (!isVerfied) {
+                console.log('need login');
+                return
+            }
+
+            const response = await APIHandler(`quizes/question/`, HTTPMethods.PUT, question, {
+                Authorization: `Bearer ${ getState(StateKeys.ACCESS) }`
+            })
+
+            return response;
+        },
+
         resetQuizState() {
             this.quiz = null;
         }
