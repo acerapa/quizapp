@@ -7,7 +7,7 @@
             </div>
             <div :class="['flex items-center hover:bg-[#5da783] rounded p-1 mt-1', {'bg-[#5da783]': nav.isActive}]" v-for="(nav, index) in navigations" :key="index">
                 <RouterLink :to="{ name: nav.name }" :class="['text-gray-600 hover:text-white w-[100%]', {'text-white': nav.isActive}]">
-                    <img :src="`../src/assets/${nav.icon}`" class="w-10 h-10 mr-5 invert inline cursor-pointer" alt="Test"> <span
+                    <img :src="`src/assets/${nav.icon}`" class="w-10 h-10 mr-5 invert inline cursor-pointer" alt="Test"> <span
                         class="cursor-pointer">{{ nav.text }}</span>
                 </RouterLink>
             </div>
@@ -28,7 +28,7 @@ const navigations = ref([
     {
         name: 'dashboard',
         text: 'Dashboard',
-        icon: `${process.env.BASE_URL}assets/dashboard.png`,
+        icon: 'dashboard.png',
         names: [
             'dashboard'
         ],
