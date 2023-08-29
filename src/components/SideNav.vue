@@ -28,7 +28,7 @@ const navigations = ref([
     {
         name: 'dashboard',
         text: 'Dashboard',
-        icon: 'dashboard.png',
+        icon: `${process.env.BASE_URL}assets/dashboard.png`,
         names: [
             'dashboard'
         ],
