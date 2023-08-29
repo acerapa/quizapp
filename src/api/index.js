@@ -1,7 +1,8 @@
 import { StateKeys, getState, saveState, removeState } from '../utils/helpers'
 
 export function APIHandler (url, method = HTTPMethods.GET, data = null, headers = null) {
-  const basePath = 'http://localhost:8000/api/'
+  // const basePath = 'http://localhost:8000/api/'
+  const basePath = 'https://quizapp-r85p.onrender.com/api/'
 
   const options = {
     method,
