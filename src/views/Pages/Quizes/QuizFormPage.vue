@@ -166,7 +166,7 @@
 
                     <div class="py-2 mt-2" v-if="questionForm.type == 'enumeration'">
                         <label for="">Number of matched</label>
-                        <small class="text-yellow-600 block">Note: Number of answer matched to be considered correct</small>
+                        <small class="text-yellow-600 block">Note: Number of answer matched to be considered correct <br> (if not supplied the actual numbers choices should be numbers of choices)</small>
                         <input type="number" v-model="questionForm.answer"
                             :class="['border py-2 px-4 rounded-md block w-[100%] mt-2 focus:outline outline-gray-200 outline-1', { 'border border-red-600' : (errors.answer && errors.answer.length)  }]">
                         <small :class="['text-red-600', { 'opacity-100': errors.answer && errors.answer.length, 'opacity-0': !(errors.answer && errors.answer.length) }]"></small>
@@ -584,8 +584,15 @@ const createQuestion = async () => {
 
             // validate question form fields
             delete questionRules.choices
-            questionRules.answer['max'] = enumeration.value.length
-            errors.value = validate(questionForm.value, questionRules)
+            rules.answer['max'] = questionForm.value.answer
+
+            // supply the answer
+            if (!questionForm.value.answer) {
+                rules.answer['max'] = enumeration.value.length
+                questionForm.value.answer = enumeration.value.length
+            }
+
+            errors.value = validate(questionForm.value, rules)
 
             // validate question form choice
             errors.value.enumeration = validate({enumeration: enumeration.value}, choiceRules, customMessage).enumeration
@@ -625,8 +632,14 @@ const createQuestion = async () => {
             break;
         case 'true-or-false':
             // validate question form fields
-            delete questionRules.choices
-            errors.value = validate(questionForm.value, questionRules)
+            delete rules.choices
+
+            // update answer rules
+            rules.answer = {
+                required: true
+            }
+
+            errors.value = validate(questionForm.value, rules)
             
             if (hasError(errors.value)) return
             break;
@@ -666,6 +679,7 @@ const createQuestion = async () => {
         questions.value.push(questionForm.value)
         modalQuestionForm.value.closeModal()
     }
+    
     reset()
 }
 
@@ -758,14 +772,6 @@ const reset = () => {
         participants_limit: 0,
         start_date: null,
         end_date: null
-    }
-
-    // question
-    questionForm.value = {
-        title: '',
-        instruction: '',
-        created_by: null,
-        type: 'multiple-choice'
     }
 
     // multiple choice
