@@ -26,5 +26,14 @@ export default [
       title: 'Quiz App | Create Quiz',
       requiresAuth: true
     }
+  },
+  {
+    path: '/quiz/preview/:id',
+    name: 'quiz-preview',
+    component: () => import('../views/Pages/Quizes/QuizPreview.vue'),
+    meta: {
+      title: 'Quiz App | Preview Quiz',
+      requiresAuth: true
+    }
   }
 ]

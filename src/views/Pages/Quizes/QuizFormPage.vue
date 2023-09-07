@@ -272,6 +272,13 @@
             </div>
 
             <div class="mt-5 flex justify-end gap-2">
+                <button class="bg-blue-400 text-white px-5 py-2 rounded hover:bg-blue-200 mr-auto"
+                >
+                    <RouterLink :to="{name: 'quiz-preview', params: {id: route.params.id}}" class="flex items-center gap-x-2">
+                        <img class="invert w-7 h-7" src="../../../assets/show.png" alt="show">
+                        Preview Quiz
+                    </RouterLink>
+                </button>
                 <button class="block bg-green-500 text-white px-5 py-2 rounded hover:bg-green-300"
                     @click="back">Back</button>
                 <button class="block bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-300"
@@ -473,6 +480,10 @@ watch(questions.value, () => {
     }
 })
 
+watch(() => questionForm.value.type, () => {
+    errors.value = [];
+})
+
 const editorUpdateContent = (content) => {
     quizForm.value.instruction = content;
 }
@@ -649,6 +660,7 @@ const createQuestion = async () => {
     if (quizStore.quiz) {
         questionForm.value.quiz_id = quizStore.quiz.id
 
+        alertConfig.value.fadeOutTime = 300
         if (!questionForm.value.id) {
             response = await quizStore.createQuizQuestion(questionForm.value)
             alertConfig.value.message = 'Question created successfully!'
@@ -867,12 +879,12 @@ const deleteConfirmationModalRes = async (res) => {
 
         alertConfig.value.code = 'success'
         alertConfig.value.message = 'Question deleted successfully'
-        alertConfig.value.fadeOutTime = 3000
+        alertConfig.value.fadeOutTime = 500
 
         alertQuiz.value.showAlert()
+        window.scrollTo({ top: 0, left: 0, behavior:'smooth' })
     }
 
-    window.scrollTo({ top: 0, left: 0, behavior:'smooth' })
     deleteModalConfirm.value.closeModal()
 }
 
