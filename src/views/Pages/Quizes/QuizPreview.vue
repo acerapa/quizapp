@@ -6,8 +6,9 @@
                     <strong class="py-5 text-lg">{{ quiz.title }}</strong>
                     <b class="py-5" v-html="quiz.instruction"></b>
                 </div>
-                <div class="bg-sky-200 shadow">
-                    <TimerComponent />
+
+                <div v-if="isTakingExam" class="bg-sky-200 shadow">
+                    <TimerComponent time="00:10" />
                 </div>
             </div>
             <hr class="my-5">
@@ -71,6 +72,9 @@ import { TRUE_OR_FALSE, MULTIPLE_CHOICE, ENUMERATION, EXPLANATION, SELECT } from
 
 // component
 import TimerComponent from '@/components/TimerComponent.vue';
+
+// Flags
+const isTakingExam = ref(false);
 
 const route = useRoute()
 const router = useRouter()
