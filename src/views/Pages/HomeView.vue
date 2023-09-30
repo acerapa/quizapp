@@ -16,7 +16,7 @@
       <h1 class="text-6xl font-bold text-[#005A60]">Participants</h1>
       <p class="text-lg font-normal text-[#005A60] mt-2">Provides a handy quizzess online</p>
 
-      <RouterLink to="/login">
+      <RouterLink :to="{ name: 'dashboard' }">
         <button class="rounded-full bg-[#01b9ff] hover:bg-blue-300 text-white px-10 py-2 mt-5">Get Started</button>
       </RouterLink>
     </div>
