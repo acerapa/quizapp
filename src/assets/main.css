@@ -7,3 +7,39 @@
 * {
   font-family: 'Quicksand';
 }
+
+.radio-custom {
+  @apply appearance-none 
+    cursor-pointer
+    border-[2px] 
+    border-white
+    ring-2
+    ring-gray-400
+    rounded-full
+    w-4 h-4 mt-1 mb-1
+    checked:bg-green-500
+    checked:ring-green-600
+    disabled:opacity-30;
+}
+
+.checkbox-custom {
+  @apply relative appearance-none mr-5;
+}
+
+.checkbox-custom::before {
+  @apply absolute -top-4 cursor-pointer border-[2px] rounded;
+  content: '';
+  width: 20px;
+  height: 20px;
+}
+
+.checkbox-custom:checked::before {
+  @apply bg-green-600;
+  border: none;
+  background-position: center;
+  background-image: url("data:image/svg+xml,%3Csvg id='ef3bBua49MO1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 20 20' shape-rendering='geometricPrecision' text-rendering='geometricPrecision' width='20' height='20'%3E%3Crect width='2' height='2.33147' rx='0' ry='0' transform='matrix(5.054257-6.253552 0.833959 0.674024 6.448906 15.150925)' fill='%23fff' stroke-width='0' /%3E%3Crect width='2.5' height='2' rx='0' ry='0' transform='matrix(.629961-.776626 2.957251 2.398778 2.078521 11.610543)' fill='%23fff' stroke-width='0' /%3E%3C/svg%3E");
+}
+
+.checkbox-custom:disabled::before {
+  @apply opacity-50 pointer-events-none;
+}

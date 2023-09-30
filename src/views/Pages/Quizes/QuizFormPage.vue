@@ -272,7 +272,7 @@
             </div>
 
             <div class="mt-5 flex justify-end gap-2">
-                <button class="bg-blue-400 text-white px-5 py-2 rounded hover:bg-blue-200 mr-auto"
+                <button v-if="route.params.id" class="bg-blue-400 text-white px-5 py-2 rounded hover:bg-blue-200 mr-auto"
                 >
                     <RouterLink :to="{name: 'quiz-preview', params: {id: route.params.id}}" class="flex items-center gap-x-2">
                         <img class="invert w-7 h-7" src="../../../assets/show.png" alt="show">
