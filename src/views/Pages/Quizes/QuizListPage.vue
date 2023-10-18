@@ -1,9 +1,7 @@
 <template>
-    <SideNav />
-
     <AlertComponent class="absolute top-2 right-2 z-40" :code="alertConfig.code" :message="alertConfig.message"
         :fade-out-time="alertConfig.fadeOutTime" ref="alertQuiz" />
-    <div class="ml-60 p-5">
+    <div>
         <ModalComponent position="top-center" ref="modalConfirm">
             <div class="bg-white p-5 rounded-md w-full mt-5 shadow-md relative">
                 <div class="flex items-center justify-between">
@@ -80,7 +78,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
-import SideNav from '@/components/SideNav.vue';
 import { useQuizStore } from '../../../stores/quiz';
 
 // component

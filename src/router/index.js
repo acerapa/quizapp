@@ -12,55 +12,67 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
-      meta: {
-        title: 'Quiz App | Home'
-      }
+      component: () => import('../views/layout/WithoutSideNav.vue'),
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('../views/Pages/LoginPage.vue'),
+          meta: {
+            title: 'Quiz App | Login'
+          }
+        },
+        {
+          path: 'register',
+          name: 'register',
+          component: () => import('../views/Pages/RegisterPage.vue'),
+          meta: {
+            title: 'Quiz App | Register'
+          }
+        },
+        {
+          path: '/',
+          name: 'home',
+          component: HomeView,
+          meta: {
+            title: 'Quiz App | Home'
+          }
+        },
+        {
+          path: 'about',
+          name: 'about',
+          component: () => import('../views/AboutView.vue'),
+          meta: {
+            title: 'Quiz App | About'
+          }
+        },
+      ]
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: () => import('../views/Pages/DashboardPage.vue'),
-      meta: {
-        title: 'Quiz App | Dashboard',
-        requiresAuth: true
-      }
+      path: '/',
+      component: () => import('../views/layout/WithSideNav.vue'),
+      children: [
+        {
+          path: '/dashboard',
+          name: 'dashboard',
+          component: () => import('../views/Pages/DashboardPage.vue'),
+          meta: {
+            title: 'Quiz App | Dashboard',
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/files',
+          name: 'files',
+          component: () => import('../views/Pages/FilesPage.vue'),
+          meta: {
+            title: 'Quiz App | Files',
+            requiresAuth: true
+          }
+        },
+        ...quizRoutes
+      ]
     },
-    {
-      path: '/files',
-      name: 'files',
-      component: () => import('../views/Pages/FilesPage.vue'),
-      meta: {
-        title: 'Quiz App | Files',
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue'),
-      meta: {
-        title: 'Quiz App | About'
-      }
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/Pages/LoginPage.vue'),
-      meta: {
-        title: 'Quiz App | Login'
-      }
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: () => import('../views/Pages/RegisterPage.vue'),
-      meta: {
-        title: 'Quiz App | Register'
-      }
-    },
-    ...quizRoutes
   ]
 })
 

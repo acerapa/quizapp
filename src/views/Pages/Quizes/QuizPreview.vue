@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-screen overflow-y-auto bg-gradient-to-r from-[#d5ecf1] to-[#dcfddb] grid items-center px-4">
+    <div class="w-full h-screen overflow-y-auto bg-gradient-to-r from-[#d5ecf1] to-[#dcfddb] grid items-center px-4 -m-5">
         <div class="p-5 my-5 rounded mx-auto bg-slate-50 min-w-[320px] w-full max-w-[1200px] h-auto max-h-[calc(100vh-40px)]">
             <div class="flex justify-between items-center">
                 <div>

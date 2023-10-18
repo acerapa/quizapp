@@ -12,5 +12,7 @@ export const removeState = (key) => {
 
 export const StateKeys = {
   ACCESS: 'access',
+  EVENTS: 'events',
   REFRESH: 'refresh',
+  ACTIVE_PAGE: 'active_page'
 }

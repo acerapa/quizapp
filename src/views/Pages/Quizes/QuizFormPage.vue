@@ -1,8 +1,7 @@
 <template>
-    <SideNav />
     <AlertComponent class="absolute top-2 right-2 z-40" :code="alertConfig.code" :message="alertConfig.message"
         :fade-out-time="alertConfig.fadeOutTime" ref="alertQuiz" @fade-out="onAlertClosed" />
-    <div class="ml-60 p-5">
+    <div>
 
         <!-- CONFIRMATION MODAL -->
         <ModalComponent position="top-center" ref="modalConfirm">
@@ -331,7 +330,6 @@ import { useAuthStore } from '@/stores/auth';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 
 // components
-import SideNav from '@/components/SideNav.vue';
 import AlertComponent from '@/components/AlertComponent.vue';
 import ModalComponent from '@/components/ModalComponent.vue';
 import EditorComponent from '@/components/EditorComponent.vue';

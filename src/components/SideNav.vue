@@ -1,14 +1,14 @@
 <template>
     <div class="shadow">
-        <div class="border fixed w-60 h-screen bg-[#B2E5C7] p-5">
-            <div class="py-10 flex items-center">
-                <img src="../assets/default.png" alt="profile" class="w-10 h-10 rounded-full inline mr-5">
-                <span class="text-gray-600 font-bold">{{ username }}</span>
+        <div class="border fixed md:w-60 h-screen bg-[#B2E5C7] p-5">
+            <div class="py-10 flex items-center max-md:justify-center">
+                <img src="../assets/default.png" alt="profile" class="w-10 h-10 rounded-full inline md:mr-5">
+                <span class="text-gray-600 font-bold md:inline hidden">{{ username }}</span>
             </div>
             <div :class="['flex items-center hover:bg-[#5da783] rounded p-1 mt-1', {'bg-[#5da783]': nav.isActive}]" v-for="(nav, index) in navigations" :key="index">
                 <RouterLink :to="{ name: nav.name }" :class="['text-gray-600 hover:text-white w-[100%]', {'text-white': nav.isActive}]">
-                    <img :src="nav.icon" class="w-10 h-10 mr-5 invert inline cursor-pointer" alt="Test"> <span
-                        class="cursor-pointer">{{ nav.text }}</span>
+                    <img :src="nav.icon" class="w-10 h-10 md:mr-5 invert inline cursor-pointer" alt="Test"> <span
+                        class="cursor-pointer md:inline hidden">{{ nav.text }}</span>
                 </RouterLink>
             </div>
         </div>
@@ -19,6 +19,8 @@
 import { RouterLink, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { onMounted, ref } from 'vue';
+import { StateKeys, getState } from '@/utils/helpers';
+import { on } from '@/utils/event';
 
 // icons
 import dashboard from '@/assets/dashboard.png'
@@ -61,12 +63,22 @@ const navigations = ref([
     }
 ])
 
+on('set-nav', function() {
+    navigations.value.forEach(nav => {
+        if (nav.names.includes(getState(StateKeys.ACTIVE_PAGE))) {
+            nav.isActive = true
+        } else {
+            nav.isActive = false
+        }
+    })
+})
+
 onMounted(async () => {
     await authStore.getAuthUser();
     username.value = authStore.user.username
 
     navigations.value.forEach(nav => {
-        if (nav.names.includes(route.name)) {
+        if (nav.names.includes(getState(StateKeys.ACTIVE_PAGE))) {
             nav.isActive = true
         } else {
             nav.isActive = false

@@ -1,5 +1,3 @@
 <template>
-    <div>
-        Files Page
-    </div>
+    Files Page
 </template>
