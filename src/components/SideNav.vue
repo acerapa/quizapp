@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow">
+    <div class="shadow hidden sm:block">
         <div class="border fixed md:w-60 h-screen bg-[#B2E5C7] p-5">
             <div class="py-10 flex items-center max-md:justify-center">
                 <img src="../assets/default.png" alt="profile" class="w-10 h-10 rounded-full inline md:mr-5">
@@ -12,6 +12,14 @@
                 </RouterLink>
             </div>
         </div>
+    </div>
+    <div class="fixed bg-white top-0 left-0 w-full shadow-sm px-3 py-2 sm:hidden z-20 h-14 flex  items-center justify-between">
+        <button type="button">
+            <img src="../assets/menu.png" class="w-9" alt="menu">
+        </button>
+        <button type="button">
+            <img src="../assets/notification.png" class="w-6" alt="notification-bell">
+        </button>
     </div>
 </template>
 

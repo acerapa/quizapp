@@ -6,7 +6,7 @@
                 {{ message }}
             </div>
             <div class="col-span-2 p-2 flex items-center">
-                <img class="invert w-6 block ml-auto cursor-pointer" src="../assets/close.png" alt="close" @click="closeAlert">
+                <img :class="['invert w-6 block ml-auto cursor-pointer pointer-events-none', {'pointer-events-auto': show}]" src="../assets/close.png" alt="close" @click="closeAlert">
             </div>
         </div>
     </div>
@@ -92,8 +92,10 @@ function showAlert() {
 }
 
 function closeAlert() {
-    if (alertContainer.value) {
-        alertContainer.value.classList.add('fadeOut');
+    if (show.value) {
+        if (alertContainer.value) {
+            alertContainer.value.classList.add('fadeOut');
+        }
     }
 }
 

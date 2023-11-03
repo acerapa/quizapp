@@ -1,5 +1,5 @@
 <template>
-    <AlertComponent class="absolute top-2 right-2 z-40" :code="alertConfig.code" :message="alertConfig.message"
+    <AlertComponent class="absolute top-14 right-2 z-30" :code="alertConfig.code" :message="alertConfig.message"
         :fade-out-time="alertConfig.fadeOutTime" ref="alertQuiz" @fade-out="onAlertClosed" />
     <div>
 

@@ -6,7 +6,7 @@ import '../../utils/event'
 
 <template>
   <SideNav />
-  <div class="md:ml-60 ml-[5.5rem] p-5">
+  <div class="mt-24 px-3 sm:mt-0 sm:p-3 md:p-5 md:ml-60 sm:ml-[5.5rem]">
       <RouterView />
   </div>
 </template>
